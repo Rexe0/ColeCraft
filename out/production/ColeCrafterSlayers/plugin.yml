@@ -1,0 +1,46 @@
+name: ColeCrafterSlayers
+version: 1.0
+author: Rexe0
+main: com.Rexe0.ColeCrafterSlayers
+api-version: 1.16
+depend: [Citizens]
+commands:
+  spawnnpc:
+    description: Spawn an NPC
+    usage: /npc <npcName>
+  updateitem:
+    description: Updates items
+    usage: /updateitem <itemID>
+  item:
+    description: Gives a custom item
+    usage: /item <id>
+  craft:
+    description: Opens the custom crafting menu
+    usage: /craft
+  anvil:
+    description: Opens the custom anvil menu
+    usage: /anvil
+  resethealth:
+    description: Resets a players health
+    usage: /resethealth <playername>
+  mob:
+    description: Spawns a custom mob
+    usage: /mob <ID> <x> <y> <z>
+  build:
+    description: Enables building
+    usage: /build
+  viewRecipe:
+    description: Views a custom recipe. No arguments for the recipe book.
+    usage: /viewRecipe [itemID]
+  stats:
+    description: Views a player's stats
+    usage: /stats <PlayerName>
+  calendar:
+    description: View the calendar of skyblock
+    usage: /calendar
+  sell:
+    description: Sell all of a specific item in your inventory
+    usage: /sell <itemID>
+  mobspawn:
+    description: Set the spawn location of a certain mob
+    usage: /mobspawn <mobID>

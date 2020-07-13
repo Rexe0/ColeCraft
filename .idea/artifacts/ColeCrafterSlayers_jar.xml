@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ColeCrafterSlayers:jar">
+    <output-path>$USER_HOME$/coding/mc_plugins/baguetteTest/plugins</output-path>
+    <root id="archive" name="ColeCrafterSlayers.jar">
+      <element id="module-output" name="ColeCrafterSlayers" />
+      <element id="extracted-dir" path="$USER_HOME$/coding/mc_plugins/baguetteTest/spigot-1.16.1.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

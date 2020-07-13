@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_colecrafterslayers" default="compile.module.colecrafterslayers">
+  <dirname property="module.colecrafterslayers.basedir" file="${ant.file.module_colecrafterslayers}"/>
+  
+  <property name="module.jdk.home.colecrafterslayers" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.colecrafterslayers" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.colecrafterslayers" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.colecrafterslayers" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="colecrafterslayers.output.dir" value="${module.colecrafterslayers.basedir}/out/production/ColeCrafterSlayers"/>
+  <property name="colecrafterslayers.testoutput.dir" value="${module.colecrafterslayers.basedir}/out/test/ColeCrafterSlayers"/>
+  
+  <path id="colecrafterslayers.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="colecrafterslayers.module.production.classpath">
+    <path refid="${module.jdk.classpath.colecrafterslayers}"/>
+    <pathelement location="${basedir}/../../coding/mc_plugins/baguetteTest/spigot-1.16.1.jar"/>
+  </path>
+  
+  <path id="colecrafterslayers.runtime.production.module.classpath">
+    <pathelement location="${colecrafterslayers.output.dir}"/>
+    <pathelement location="${basedir}/../../coding/mc_plugins/baguetteTest/spigot-1.16.1.jar"/>
+  </path>
+  
+  <path id="colecrafterslayers.module.classpath">
+    <path refid="${module.jdk.classpath.colecrafterslayers}"/>
+    <pathelement location="${colecrafterslayers.output.dir}"/>
+    <pathelement location="${basedir}/../../coding/mc_plugins/baguetteTest/spigot-1.16.1.jar"/>
+  </path>
+  
+  <path id="colecrafterslayers.runtime.module.classpath">
+    <pathelement location="${colecrafterslayers.testoutput.dir}"/>
+    <pathelement location="${colecrafterslayers.output.dir}"/>
+    <pathelement location="${basedir}/../../coding/mc_plugins/baguetteTest/spigot-1.16.1.jar"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.colecrafterslayers">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.colecrafterslayers">
+    <patternset refid="excluded.from.module.colecrafterslayers"/>
+  </patternset>
+  
+  <path id="colecrafterslayers.module.sourcepath">
+    <dirset dir="${module.colecrafterslayers.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.colecrafterslayers" depends="compile.module.colecrafterslayers.production,compile.module.colecrafterslayers.tests" description="Compile module ColeCrafterSlayers"/>
+  
+  <target name="compile.module.colecrafterslayers.production" depends="register.custom.compilers" description="Compile module ColeCrafterSlayers; production classes">
+    <mkdir dir="${colecrafterslayers.output.dir}"/>
+    <javac2 destdir="${colecrafterslayers.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.colecrafterslayers}/javac">
+      <compilerarg line="${compiler.args.colecrafterslayers}"/>
+      <bootclasspath refid="colecrafterslayers.module.bootclasspath"/>
+      <classpath refid="colecrafterslayers.module.production.classpath"/>
+      <src refid="colecrafterslayers.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.colecrafterslayers"/>
+    </javac2>
+    
+    <copy todir="${colecrafterslayers.output.dir}">
+      <fileset dir="${module.colecrafterslayers.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.colecrafterslayers.tests" depends="register.custom.compilers,compile.module.colecrafterslayers.production" description="compile module ColeCrafterSlayers; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.colecrafterslayers" description="cleanup module">
+    <delete dir="${colecrafterslayers.output.dir}"/>
+    <delete dir="${colecrafterslayers.testoutput.dir}"/>
+  </target>
+</project>
