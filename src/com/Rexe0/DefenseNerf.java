@@ -244,6 +244,40 @@ public class DefenseNerf implements Listener {
         return foundValue;
     }
 
+    public static String getItemRarity(ItemStack item) {
+        if (item == null) return null;
+        if (!item.hasItemMeta()) return null;
+        NamespacedKey key = new NamespacedKey(ColeCrafterSlayers.getInstance(), "rarity");
+        ItemMeta itemMeta = item.getItemMeta();
+        if (itemMeta == null) return null;
+        PersistentDataContainer container = itemMeta.getPersistentDataContainer();
+
+
+        String foundValue = null;
+        if (container.has(key, PersistentDataType.STRING)) {
+            foundValue = container.get(key, PersistentDataType.STRING);
+        }
+
+        return foundValue;
+    }
+
+    public static String getItemType(ItemStack item) {
+        if (item == null) return null;
+        if (!item.hasItemMeta()) return null;
+        NamespacedKey key = new NamespacedKey(ColeCrafterSlayers.getInstance(), "itemType");
+        ItemMeta itemMeta = item.getItemMeta();
+        if (itemMeta == null) return null;
+        PersistentDataContainer container = itemMeta.getPersistentDataContainer();
+
+
+        String foundValue = null;
+        if (container.has(key, PersistentDataType.STRING)) {
+            foundValue = container.get(key, PersistentDataType.STRING);
+        }
+
+        return foundValue;
+    }
+
     @EventHandler
     public void onBowShoot(EntityShootBowEvent e) {
 
@@ -373,9 +407,11 @@ public class DefenseNerf implements Listener {
 
 
     @EventHandler
-        public void onDeath(EntityDeathEvent e) {
+    public void onDeath(EntityDeathEvent e) {
 
 
+
+        e.getDrops().clear();
 
 
 
@@ -404,9 +440,7 @@ public class DefenseNerf implements Listener {
 
 
         if (foundValue != null) {
-            Random RNG = new Random();
 
-            int number = 0;
 
 
 
@@ -416,30 +450,21 @@ public class DefenseNerf implements Listener {
 
                 if (foundValue1 != null) {
 
+                    e.setDroppedExp(foundValue1/2);
+
                     NumberFormat numberFormat = NumberFormat.getInstance();
 
                     numberFormat.setGroupingUsed(true);
 
-                    ScoreboardManager manager = Bukkit.getScoreboardManager();
-                    Scoreboard scoreboard = manager.getMainScoreboard();
-                    Objective combatXp = scoreboard.getObjective("combatXP");
-                    Objective combatLevel = scoreboard.getObjective("combatLevel");
 
 
-                    Score combatXpScore = combatXp.getScore(lastKilledEntity.get(e.getEntity()).getName());
-                    Score combatLevelScore = combatLevel.getScore(lastKilledEntity.get(e.getEntity()).getName());
 
-                    if (combatXpScore == null) {
-                        combatXpScore.setScore(0);
-                    }
 
-                    if (combatLevelScore == null) {
-                        combatLevelScore.setScore(0);
-                    }
+                    float combatXp = ColeCrafterSlayers.getSkillXP(player, "combat");
+                    float combatLevel = ColeCrafterSlayers.getSkillLevel(player, "combat");
+                    ColeCrafterSlayers.setSkillXP(player,"combat", combatXp+foundValue1);
 
-                    combatXpScore.setScore(combatXp.getScore(lastKilledEntity.get(e.getEntity()).getName()).getScore()+foundValue1);
-
-                    String combatXpmessage = "§3+"+foundValue1+" Combat ("+numberFormat.format(combatXpScore.getScore())+"/"+numberFormat.format(combatLevelScore.getScore() == 50 ? Math.ceil(100*(Math.pow(1.26, 48))+300*50) : Math.ceil(100*(Math.pow(1.26, combatLevelScore.getScore())))+300*(combatLevelScore.getScore()))+")";
+                    String combatXpmessage = "§3+"+foundValue1+" Combat ("+numberFormat.format(combatXp)+"/"+numberFormat.format(combatLevel == 50 ? Math.ceil(100*(Math.pow(1.26, 48))+300*50) : Math.ceil(100*(Math.pow(1.26, combatLevel)))+300*(combatLevel))+")";
                     player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 2, 2);
 
                     PacketPlayOutChat packet = new PacketPlayOutChat(IChatBaseComponent.ChatSerializer.a("{\"text\":\"" + combatXpmessage + "\"}"), ChatMessageType.GAME_INFO, UUID.randomUUID());
@@ -454,158 +479,117 @@ public class DefenseNerf implements Listener {
                         }
                     }, 40);
 
-                    if (combatXpScore.getScore() >= Math.ceil(100*(Math.pow(1.26, combatLevelScore.getScore()))+300*(combatLevelScore.getScore())) && (combatLevelScore.getScore() < 50)) {
-                        player.sendMessage(ChatColor.DARK_AQUA+"--------------------------------------\n"+ChatColor.AQUA+""+ChatColor.BOLD+" SKILL LEVEL UP"+ChatColor.RESET+""
-                                +ChatColor.DARK_AQUA+" Combat "+ChatColor.DARK_GRAY+combatLevelScore.getScore()+"→ "+ChatColor.DARK_AQUA+(combatLevelScore.getScore()+1)+ChatColor.GREEN+""+ChatColor.BOLD+"\n Rewards\n  "+ChatColor.RESET+""+ChatColor.DARK_GRAY+"+"+ChatColor.GREEN+"0.25"+ChatColor.RED+" ❁ Damage\n"+ChatColor.DARK_AQUA+"--------------------------------------\n");
-                        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 0);
-                        combatLevelScore.setScore(combatLevelScore.getScore()+1);
-
-
-                        UUID uuid = UUID.fromString("41c90f75-20ea-4f77-997a-db7a3f9d35a5");
-
-                        for (AttributeModifier attribute :  player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getModifiers()) {
-                            if (attribute.getName().equals("combatSkill")) {
-                                player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).removeModifier(attribute);
-
-                            }
-
-                        }
-                        player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).addModifier(new AttributeModifier(uuid, "combatSkill", 0.25*combatLevelScore.getScore(), AttributeModifier.Operation.ADD_NUMBER));
-
-                    }
 
 
                 }
+
+
 
                 if (foundValue.equals("SPLITTER_SPIDER")) {
                     CustomMob.spawnMob("SILVERFISH", e.getEntity().getLocation());
                     CustomMob.spawnMob("SILVERFISH", e.getEntity().getLocation());
                 }
 
+                boolean isSpider = false;
+                boolean isSkele = false;
+                boolean isZombie = false;
+                if (foundValue.contains("_")) {
+                    for (String str : foundValue.split("_")) {
+                        switch (str) {
+                            case "SPIDER":
+                                isSpider = true;
+                                break;
+                            case "SKELETON":
+                                isSkele = true;
+                                break;
+                            case "ZOMBIE":
+                                isZombie = true;
+                                break;
+                        }
+                    }
+                } else {
+
+                    switch (foundValue) {
+                        case "SPIDER":
+                            isSpider = true;
+                            break;
+                        case "SKELETON":
+                            isSkele = true;
+                            break;
+                        case "ZOMBIE":
+                            isZombie = true;
+                            break;
+                    }
+                }
+
+
+                if (isSpider) {
+                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 1, CustomMaterial.getItemClass("STRING"), ChatColor.WHITE+"String", CustomLootDrop.Rarity.GUARANTEED, e.getEntity(), 1, 3));
+                }
+
+                if (isSkele) {
+                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 1, CustomMaterial.getItemClass("BONE"), ChatColor.WHITE+"Bone", CustomLootDrop.Rarity.GUARANTEED, e.getEntity(), 1, 2));
+                }
+
+                if (isZombie) {
+                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 1, CustomMaterial.getItemClass("ROTTEN_FLESH"), ChatColor.WHITE+"Rotten Flesh", CustomLootDrop.Rarity.GUARANTEED, e.getEntity(), 0, 2));
+                }
+
+                if (foundValue.equals("WITHERED_ARMOR")) {
+                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 1, CustomMaterial.getItemClass("NETHERITE_SCRAP"), ChatColor.BLUE+"Netherite Scrap", CustomLootDrop.Rarity.GUARANTEED, e.getEntity(), 0, 2));
+
+                }
+
                 if (foundValue.equals("MAGMA_CUBE_BOSS")) {
 
-                    Bukkit.getServer().getPluginManager().callEvent(new CustomBossDeathEvent(player, CustomBossDeathEvent.BossType.MAGMA_CUBE_BOSS, e.getEntity(), player ,magmaBossDamage));
+                    HashMap<Player, Integer> spawner = new HashMap<>();
+                    spawner.put(SlayerMenu.magmaBossSummoner, 1);
+                    Bukkit.getServer().getPluginManager().callEvent(new CustomBossDeathEvent(player, CustomBossDeathEvent.BossType.MAGMA_CUBE_BOSS, e.getEntity(), spawner ,magmaBossDamage));
 
 
-                    Location loc = e.getEntity().getLocation();
+                    SlayerMenu.magmaBossSummoner = null;
 
-                    double spawnY = loc.getWorld().getHighestBlockYAt(loc);
-
-                    Location spawnLocation = new Location(loc.getWorld(), loc.getX(), spawnY, loc.getZ());
-
-
-                    for (Player entity : Bukkit.getOnlinePlayers()) {
-                        entity.sendBlockChange(spawnLocation, Material.BEACON.createBlockData());
-
-                        if (emberRodPerson != null) {
-                            Bukkit.broadcastMessage("Session 2");
-                            entity.sendMessage(ChatColor.GOLD + emberRodPerson.getName() + ChatColor.YELLOW + " has obtained " + ChatColor.DARK_PURPLE + "Ember Rod");
-                        }
-                    }
-
-
-                    Item item = null;
-                    if (emberRodPerson != null) {
-                        item = spawnLocation.getWorld().dropItem(spawnLocation, new EmberRod());
-                        item.setCustomNameVisible(true);
-                        item.setCustomName(ChatColor.GOLD+""+ChatColor.MAGIC+"I"+ChatColor.RESET+""+ChatColor.DARK_PURPLE+" Ember Rod "+ChatColor.GOLD+""+ChatColor.MAGIC+"I");
-                        item.setInvulnerable(true);
-
-                        ArrayList<Item> reservedItems = new ArrayList<>();
-                        if (playerSpecificPickup.get(emberRodPerson) != null) reservedItems = playerSpecificPickup.get(emberRodPerson);
-
-                        Bukkit.broadcastMessage("Session 3  "+emberRodPerson.getName());
-
-                        reservedItems.add(item);
-
-                        playerSpecificPickup.put(emberRodPerson, reservedItems);
-                    }
-
-
-
-                    for (Player p : Bukkit.getOnlinePlayers()) {
-                        if (emberRodPerson != null) {
-                            if (!(p.equals(emberRodPerson))) {
-//                                PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(((CraftItem)item).getHandle().getId());
-                                PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(item.getEntityId());
-
-                                ((CraftPlayer)p).getHandle().playerConnection.sendPacket(packet);
-
-                                p.sendMessage("Session 4");
-                            }
-
-                        }
-                        Item item1 = spawnLocation.getWorld().dropItem(spawnLocation, new EmberFragment());
-                        item1.getItemStack().setAmount(emberAmount.get(p));
-
-                        item1.setCustomNameVisible(true);
-                        item1.setCustomName(ChatColor.GOLD+""+ChatColor.MAGIC+"I"+ChatColor.RESET+" "+ChatColor.BLUE+item1.getItemStack().getAmount()+"x Ember Fragment "+ChatColor.GOLD+""+ChatColor.MAGIC+"I");
-
-                        item1.setInvulnerable(true);
-
-                        ArrayList<Item> reservedItems = new ArrayList<>();
-                        if (playerSpecificPickup.get(p) != null) reservedItems = playerSpecificPickup.get(p);
-
-                        reservedItems.add(item1);
-
-                        playerSpecificPickup.put(p, reservedItems);
-
-                        p.sendMessage("Session 5  "+emberAmount.get(p)+" ");
-
-                        for (Player pl : Bukkit.getOnlinePlayers()) {
-                            if (!(pl.equals(p))) {
-//                                PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(((CraftItem)item1).getHandle().getId());
-                                PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(item1.getEntityId());
-
-
-                                ((CraftPlayer)pl).getHandle().playerConnection.sendPacket(packet);
-                                pl.sendMessage("Session 6");
-                            }
-                        }
-                    }
-
-                    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), ("execute positioned "+spawnLocation.getBlockX()+" "+spawnLocation.getBlockY()+" "+spawnLocation.getBlockZ()+" run spreadplayers "+spawnLocation.getBlockX()+" "+spawnLocation.getBlockZ()+" "+1+" "+5+" "+false+" @e[type=item,distance=..2]"));
                     magmaBossDamage.clear();
                 }
 
                 if (foundValue.equals("LAPIS_ZOMBIE")) {
 
-                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 200, CustomItem.getItemClass("LAPIS_HELMET"), ChatColor.GREEN+"Lapis Armor Helmet", CustomLootDrop.Rarity.RARE, e.getEntity()));
-                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 200, CustomItem.getItemClass("LAPIS_CHESTPLATE"), ChatColor.GREEN+"Lapis Armor Chestplate", CustomLootDrop.Rarity.RARE, e.getEntity()));
-                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 200, CustomItem.getItemClass("LAPIS_LEGGINGS"), ChatColor.GREEN+"Lapis Armor Leggings", CustomLootDrop.Rarity.RARE, e.getEntity()));
-                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 200, CustomItem.getItemClass("LAPIS_BOOTS"), ChatColor.GREEN+"Lapis Armor Boots", CustomLootDrop.Rarity.RARE, e.getEntity()));
+                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 200, CustomItem.getItemClass("LAPIS_HELMET"), ChatColor.GREEN+"Lapis Armor Helmet", CustomLootDrop.Rarity.RARE, e.getEntity(), 1, 1));
+                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 200, CustomItem.getItemClass("LAPIS_CHESTPLATE"), ChatColor.GREEN+"Lapis Armor Chestplate", CustomLootDrop.Rarity.RARE, e.getEntity(), 1, 1));
+                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 200, CustomItem.getItemClass("LAPIS_LEGGINGS"), ChatColor.GREEN+"Lapis Armor Leggings", CustomLootDrop.Rarity.RARE, e.getEntity(), 1, 1));
+                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 200, CustomItem.getItemClass("LAPIS_BOOTS"), ChatColor.GREEN+"Lapis Armor Boots", CustomLootDrop.Rarity.RARE, e.getEntity(), 1, 1));
                 }
 
                 if (foundValue.equals("MINER_ZOMBIE")) {
 
-                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 200, CustomItem.getItemClass("MINER_HELMET"), ChatColor.BLUE+"Miner Armor Helmet", CustomLootDrop.Rarity.RARE, e.getEntity()));
-                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 200, CustomItem.getItemClass("MINER_CHESTPLATE"), ChatColor.BLUE+"Miner Armor Chestplate", CustomLootDrop.Rarity.RARE, e.getEntity()));
-                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 200, CustomItem.getItemClass("MINER_LEGGINGS"), ChatColor.BLUE+"Miner Armor Leggings", CustomLootDrop.Rarity.RARE, e.getEntity()));
-                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 200, CustomItem.getItemClass("MINER_BOOTS"), ChatColor.BLUE+"Miner Armor Boots", CustomLootDrop.Rarity.RARE, e.getEntity()));
+                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 200, CustomItem.getItemClass("MINER_HELMET"), ChatColor.BLUE+"Miner Armor Helmet", CustomLootDrop.Rarity.RARE, e.getEntity(), 1, 1));
+                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 200, CustomItem.getItemClass("MINER_CHESTPLATE"), ChatColor.BLUE+"Miner Armor Chestplate", CustomLootDrop.Rarity.RARE, e.getEntity(), 1, 1));
+                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 200, CustomItem.getItemClass("MINER_LEGGINGS"), ChatColor.BLUE+"Miner Armor Leggings", CustomLootDrop.Rarity.RARE, e.getEntity(), 1, 1));
+                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 200, CustomItem.getItemClass("MINER_BOOTS"), ChatColor.BLUE+"Miner Armor Boots", CustomLootDrop.Rarity.RARE, e.getEntity(), 1, 1));
                 }
 
                 if (foundValue.equals("STRONG_MINER_ZOMBIE")) {
                     ItemStack item = CustomItem.getItemClass("MINER_CHESTPLATE");
                     item.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
 
-                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 300, item, ChatColor.BLUE+"Miner Armor Chestplate", CustomLootDrop.Rarity.VERY_RARE, e.getEntity()));
+                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 300, item, ChatColor.BLUE+"Miner Armor Chestplate", CustomLootDrop.Rarity.VERY_RARE, e.getEntity(), 1, 1));
 
                     item = CustomItem.getItemClass("MINER_HELMET");
                     item.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
-                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 300, item, ChatColor.BLUE+"Miner Armor Helmet", CustomLootDrop.Rarity.VERY_RARE, e.getEntity()));
+                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 300, item, ChatColor.BLUE+"Miner Armor Helmet", CustomLootDrop.Rarity.VERY_RARE, e.getEntity(), 1, 1));
 
                     item = CustomItem.getItemClass("MINER_LEGGINGS");
                     item.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
-                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 300, item, ChatColor.BLUE+"Miner Armor Leggings", CustomLootDrop.Rarity.VERY_RARE, e.getEntity()));
+                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 300, item, ChatColor.BLUE+"Miner Armor Leggings", CustomLootDrop.Rarity.VERY_RARE, e.getEntity(), 1, 1));
 
                     item = CustomItem.getItemClass("MINER_BOOTS");
                     item.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
-                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 300, item, ChatColor.BLUE+"Miner Armor Boots", CustomLootDrop.Rarity.VERY_RARE, e.getEntity()));
+                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 300, item, ChatColor.BLUE+"Miner Armor Boots", CustomLootDrop.Rarity.VERY_RARE, e.getEntity(), 1, 1));
                 }
 
                 if (foundValue.equals("ZOMBIE_PIGMAN")) {
 
-                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 20, CustomItem.getItemClass("FLAMING_SWORD"), ChatColor.GREEN+"Flaming Sword", CustomLootDrop.Rarity.RARE, e.getEntity()));
+                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 20, CustomItem.getItemClass("FLAMING_SWORD"), ChatColor.GREEN+"Flaming Sword", CustomLootDrop.Rarity.RARE, e.getEntity(), 1, 1));
                 }
             }
         }
@@ -667,16 +651,16 @@ public class DefenseNerf implements Listener {
 
                     ArrayList<Item> itemDrops = new ArrayList<>();
                     if (slayerTier == 8) {
-                        Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 7, 13000, CustomItem.getItemClass("SCYTHE_BLADE"), ChatColor.GOLD+"Scythe Blade", CustomLootDrop.Rarity.CRAZY_RARE, e.getEntity()));
-                        Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 42, 13000, CustomItem.getItemClass("ROTTED_TOOTH"), ChatColor.DARK_PURPLE+"Rotted Tooth", CustomLootDrop.Rarity.CRAZY_RARE, e.getEntity()));
-                        Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 21, 13000, CustomItem.getItemClass("BEHEADED_HORROR"), ChatColor.DARK_PURPLE+"Beheaded Horror", CustomLootDrop.Rarity.CRAZY_RARE, e.getEntity()));
+                        Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 7, 13000, CustomItem.getItemClass("SCYTHE_BLADE"), ChatColor.GOLD+"Scythe Blade", CustomLootDrop.Rarity.CRAZY_RARE, e.getEntity(), 1, 1));
+                        Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 42, 13000, CustomItem.getItemClass("ROTTED_TOOTH"), ChatColor.DARK_PURPLE+"Rotted Tooth", CustomLootDrop.Rarity.CRAZY_RARE, e.getEntity(), 1, 1));
+                        Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 21, 13000, CustomItem.getItemClass("BEHEADED_HORROR"), ChatColor.DARK_PURPLE+"Beheaded Horror", CustomLootDrop.Rarity.CRAZY_RARE, e.getEntity(), 1, 1));
 
 
                     }
                     if (slayerTier == 9) {
-                        Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 10, 13000, CustomItem.getItemClass("SCYTHE_BLADE"), ChatColor.GOLD+"Scythe Blade", CustomLootDrop.Rarity.CRAZY_RARE, e.getEntity()));
-                        Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 60, 13000, CustomItem.getItemClass("ROTTED_TOOTH"), ChatColor.DARK_PURPLE+"Rotted Tooth", CustomLootDrop.Rarity.CRAZY_RARE, e.getEntity()));
-                        Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 30, 13000, CustomItem.getItemClass("BEHEADED_HORROR"), ChatColor.DARK_PURPLE+"Beheaded Horror", CustomLootDrop.Rarity.CRAZY_RARE, e.getEntity()));
+                        Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 10, 13000, CustomItem.getItemClass("SCYTHE_BLADE"), ChatColor.GOLD+"Scythe Blade", CustomLootDrop.Rarity.CRAZY_RARE, e.getEntity(), 1, 1));
+                        Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 60, 13000, CustomItem.getItemClass("ROTTED_TOOTH"), ChatColor.DARK_PURPLE+"Rotted Tooth", CustomLootDrop.Rarity.CRAZY_RARE, e.getEntity(), 1, 1));
+                        Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 30, 13000, CustomItem.getItemClass("BEHEADED_HORROR"), ChatColor.DARK_PURPLE+"Beheaded Horror", CustomLootDrop.Rarity.CRAZY_RARE, e.getEntity(), 1, 1));
 
                     }
 
@@ -712,6 +696,7 @@ public class DefenseNerf implements Listener {
     public void onHit(EntityDamageByEntityEvent e) {
 
 
+
         NamespacedKey key2 = new NamespacedKey(ColeCrafterSlayers.getInstance(), "mobID");
 
         PersistentDataContainer container2 = e.getEntity().getPersistentDataContainer();
@@ -723,68 +708,72 @@ public class DefenseNerf implements Listener {
         }
 
         if (foundValue2 != null) {
-            if (foundValue2.equals("MAGMA_CUBE_BOSS")) {
-                int health = (int) Math.ceil(((LivingEntity) e.getEntity()).getHealth());
+            ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
+                @Override
+                public void run() {
+                    int health = (int) Math.ceil(((LivingEntity) e.getEntity()).getHealth());
+                    String customName = e.getEntity().getCustomName();
 
-                String color = health > 150 ? ChatColor.GREEN + "" : health <= 150 && health > 75 ? ChatColor.YELLOW + "" : health <= 75 ? ChatColor.RED + "" : "";
+                    int maxHealth = (int) ((LivingEntity) e.getEntity()).getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 
-                e.getEntity().setCustomName(ChatColor.DARK_GRAY+"["+ChatColor.GRAY+"Lv100"+ChatColor.DARK_GRAY+"] "+ChatColor.RED+"Magma Cube Boss " + color + health + ChatColor.GREEN + "/300" + ChatColor.RED + "❤");
+                    String color = health > maxHealth/2 ? ChatColor.GREEN + "" : health <= maxHealth/2 && health > maxHealth/4 ? ChatColor.YELLOW + "" : health <= maxHealth/4 ? ChatColor.RED + "" : "";
 
-            }
-        }
-
-
-
-        if (e.getEntity().getType() == EntityType.ZOMBIE) {
-            if (((LivingEntity) e.getEntity()).getEquipment().getChestplate() != null) {
-                if (((LivingEntity) e.getEntity()).getEquipment().getChestplate().hasItemMeta()) {
-                    if (((LivingEntity) e.getEntity()).getEquipment().getChestplate().getItemMeta().hasDisplayName()) {
-                        if (((LivingEntity) e.getEntity()).getEquipment().getChestplate().getItemMeta().getDisplayName().equalsIgnoreCase("Revenant")) {
-                            if (((LivingEntity) e.getEntity()).getEquipment().getChestplate().getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL) == 5) {
-                                int health = (int) Math.ceil(((LivingEntity) e.getEntity()).getHealth());
-
-                                String color = health > 15 ? ChatColor.GREEN + "" : health <= 15 && health > 8 ? ChatColor.YELLOW + "" : health <= 8 ? ChatColor.RED + "" : "";
-
-                                e.getEntity().setCustomName(ChatColor.DARK_GRAY+"["+ChatColor.GRAY+"Lv10"+ChatColor.DARK_GRAY+"] "+ChatColor.RED + "☠" + ChatColor.AQUA + " Revenant Horror " + color + health + ChatColor.GREEN + "/30" + ChatColor.RED + "❤");
-                            }
-                            if (((LivingEntity) e.getEntity()).getEquipment().getChestplate().getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL) == 6) {
-                                int health = (int) Math.ceil(((LivingEntity) e.getEntity()).getHealth());
-
-                                String color = health > 45 ? ChatColor.GREEN + "" : health <= 45 && health > 23 ? ChatColor.YELLOW + "" : health <= 23 ? ChatColor.RED + "" : "";
-
-                                e.getEntity().setCustomName(ChatColor.DARK_GRAY+"["+ChatColor.GRAY+"Lv70"+ChatColor.DARK_GRAY+"] "+ChatColor.RED + "☠" + ChatColor.AQUA + " Revenant Horror " + color + health + ChatColor.GREEN + "/90" + ChatColor.RED + "❤");
-                            }
-                            if (((LivingEntity) e.getEntity()).getEquipment().getChestplate().getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL) == 7) {
-                                int health = (int) Math.ceil(((LivingEntity) e.getEntity()).getHealth());
-
-                                String color = health > 150 ? ChatColor.GREEN + "" : health <= 150 && health > 75 ? ChatColor.YELLOW + "" : health <= 75 ? ChatColor.RED + "" : "";
-
-                                e.getEntity().setCustomName(ChatColor.DARK_GRAY+"["+ChatColor.GRAY+"Lv310"+ChatColor.DARK_GRAY+"] "+ChatColor.RED + "☠" + ChatColor.AQUA + " Revenant Horror " + color + health + ChatColor.GREEN + "/300" + ChatColor.RED + "❤");
-                            }
-
-                            if (((LivingEntity) e.getEntity()).getEquipment().getChestplate().getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL) == 8) {
-                                int health = (int) Math.ceil(((LivingEntity) e.getEntity()).getHealth());
-
-                                String color = health > 450 ? ChatColor.GREEN + "" : health <= 450 && health > 225 ? ChatColor.YELLOW + "" : health <= 225 ? ChatColor.RED + "" : "";
-
-                                e.getEntity().setCustomName(ChatColor.DARK_GRAY+"["+ChatColor.GRAY+"Lv610"+ChatColor.DARK_GRAY+"] "+ChatColor.RED + "☠" + ChatColor.AQUA + " Revenant Horror " + color + health + ChatColor.GREEN + "/900" + ChatColor.RED + "❤");
-                            }
-                            if (((LivingEntity) e.getEntity()).getEquipment().getChestplate().getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL) == 9) {
-                                int health = (int) Math.ceil(((LivingEntity) e.getEntity()).getHealth());
-
-                                String color = health > 1050 ? ChatColor.GREEN + "" : health <= 1050 && health > 525 ? ChatColor.YELLOW + "" : health <= 525 ? ChatColor.RED + "" : "";
-
-                                e.getEntity().setCustomName(ChatColor.DARK_GRAY+"["+ChatColor.GRAY+"Lv890"+ChatColor.DARK_GRAY+"] "+ChatColor.RED + "☠" + ChatColor.AQUA + " Revenant Horror " + color + health + ChatColor.GREEN + "/2100" + ChatColor.RED + "❤");
-                            }
+                    boolean hasHpBar = false;
+                    for (int i = 0; i < customName.length(); i++) {
+                        if (customName.charAt(i) == '❤') {
+                            hasHpBar = true;
+                            break;
                         }
                     }
+
+                    if (!hasHpBar) {
+                        e.getEntity().setCustomName(customName + " " + color + health + ChatColor.RED + "❤");
+                    } else {
+                        String[] splitName = customName.split(" ");
+                        String finalCustomName = "";
+                        for (String str : splitName) {
+                            boolean isHp = false;
+                            for (int i = 0; i < str.length(); i++) {
+                                if (str.charAt(i) == '❤') {
+                                    isHp = true;
+                                    break;
+                                }
+                            }
+                            if (!isHp) {
+                                finalCustomName += str+" ";
+                            }
+
+
+                        }
+
+                        e.getEntity().setCustomName(finalCustomName + "" + color + health + ChatColor.RED + "❤");
+                    }
+
                 }
-            }
+            }, 1);
+
         }
 
-        LivingEntity damager = e.getDamager() instanceof Arrow ? (LivingEntity) ((Arrow)e.getDamager()).getShooter() : e.getDamager() instanceof LivingEntity ? (LivingEntity) e.getDamager() : null;
 
+
+
+
+
+        LivingEntity damager1 = null;
+        if (e.getDamager() instanceof Arrow) {
+            damager1 = (LivingEntity) ((Arrow)e.getDamager()).getShooter();
+        } else if (e.getDamager() instanceof Fireball) {
+            damager1 = (LivingEntity) ((Fireball)e.getDamager()).getShooter();
+        } else if (e.getDamager() instanceof LivingEntity) {
+            damager1 = (LivingEntity) e.getDamager();
+        }
+
+        LivingEntity damager = damager1;
         if (damager instanceof Player) {
+            if (e.getEntity() instanceof Player) {
+                e.setCancelled(true);
+                return;
+            }
 
             Player player = (Player) damager;
             ItemStack heldItem = player.getItemInHand();
@@ -816,6 +805,10 @@ public class DefenseNerf implements Listener {
 
             ItemStack heldItem1 = damager.getEquipment().getItemInMainHand();
 
+            if (e.getDamager() instanceof Fireball) {
+                e.setDamage(damager.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getValue()/6);
+            }
+
             if (e.getDamager() instanceof Arrow) {
                 if (heldItem1 != null) {
 
@@ -843,10 +836,22 @@ public class DefenseNerf implements Listener {
                             }
 
                             if (foundValue != 0) {
-                                int powerLevel = heldItem1.getEnchantmentLevel(Enchantment.ARROW_DAMAGE);
-                                foundValue += foundValue1;
-                                foundValue *= 1 + (0.08 * powerLevel);
-                                e.setDamage(foundValue);
+                                String foundValue3 = getItemType(heldItem1);
+                                if (foundValue3 != null) {
+
+                                    if (foundValue3.equals("BOW")) {
+                                        int powerLevel = heldItem1.getEnchantmentLevel(Enchantment.ARROW_DAMAGE);
+                                        foundValue += foundValue1;
+                                        foundValue += damager.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getValue();
+                                        foundValue *= 1 + (0.08 * powerLevel);
+                                        e.setDamage(foundValue);
+                                    } else {
+                                        int powerLevel = heldItem1.getEnchantmentLevel(Enchantment.ARROW_DAMAGE);
+                                        foundValue += foundValue1;
+                                        foundValue *= 1 + (0.08 * powerLevel);
+                                        e.setDamage(foundValue*0.75);
+                                    }
+                                }
                             }
                         }
                     }
@@ -1082,6 +1087,8 @@ public class DefenseNerf implements Listener {
                 defensePoints = StatsCommand.getDefence(player);
 
 
+
+
                 if (player instanceof Player) {
                     byte zombieTalType = 0;
                     double damageReduction = 0;
@@ -1303,15 +1310,7 @@ public class DefenseNerf implements Listener {
                 }, 20);
 
 
-                NamespacedKey key = new NamespacedKey(ColeCrafterSlayers.getInstance(), "mobID");
-
-                PersistentDataContainer container = e.getEntity().getPersistentDataContainer();
-
-
-                String foundValue = null;
-                if (container.has(key, PersistentDataType.STRING)) {
-                    foundValue = container.get(key, PersistentDataType.STRING);
-                }
+                String foundValue = ColeCrafterSlayers.getMobID(player);
 
                 if (foundValue != null) {
                     if (foundValue.equals("MAGMA_CUBE_BOSS")) {
@@ -1321,8 +1320,46 @@ public class DefenseNerf implements Listener {
                             magmaBossDamage.put((Player) damager, (float) (damage2 + damage));
                         }
                     }
+                    if (foundValue.equals("WITHERED_ARMOR")) {
+                        if (damager instanceof Player) {
+                            ((Player) damager).playSound(damager.getLocation(), Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, 2, 0);
+                        }
+                    }
                 }
 
+
+
+                double DamageReductionStat = player.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS).getValue();
+
+                damage = damage * (1 - DamageReductionStat);
+
+
+                String foundValue1 = ColeCrafterSlayers.getMobType(player);
+
+                if (foundValue1 != null) {
+                    if (foundValue1.equals("CREATURE")) {
+                        double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+                        if (damage > maxHealth/20) {
+                            double extraDamage = damage-maxHealth/20;
+                            damage = maxHealth/20+(extraDamage/20);
+                        }
+
+                        if (damage > maxHealth/10) {
+                            damage = maxHealth/10;
+                        }
+                    }
+                    if (foundValue1.equals("BOSS")) {
+                        double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+                        if (damage > maxHealth/50) {
+                            double extraDamage = damage-maxHealth/50;
+                            damage = maxHealth/50+(extraDamage/10);
+                        }
+
+                        if (damage > maxHealth/25) {
+                            damage = maxHealth/25;
+                        }
+                    }
+                }
 
                 if (player instanceof Player) {
                     if (player.getHealth() - damage <= 0) {
@@ -1941,31 +1978,19 @@ public class DefenseNerf implements Listener {
 
         if (miningXPAdd > 0) {
 
-            Objective combatXp = scoreboard.getObjective("miningXP");
-            Objective combatLevel = scoreboard.getObjective("miningLevel");
+            float combatXp = ColeCrafterSlayers.getSkillXP(player, "mining");
+            float combatLevel = ColeCrafterSlayers.getSkillLevel(player, "mining");
 
 
-            Score combatXpScore = combatXp.getScore(player);
-            Score combatLevelScore = combatLevel.getScore(player);
 
-            if (combatXpScore == null) {
-                combatXpScore.setScore(0);
-            }
 
-            if (combatLevelScore == null) {
-                combatLevelScore.setScore(0);
-            }
+            ColeCrafterSlayers.setSkillXP(player, "mining", combatXp + miningXPAdd);
 
 
 
 
 
-            combatXpScore.setScore(combatXp.getScore(player).getScore() + miningXPAdd);
-
-
-
-
-            String combatXpmessage = "§3+" + miningXPAdd + " Mining (" + numberFormat.format(combatXpScore.getScore()) + "/" + numberFormat.format(combatLevelScore.getScore() == 50 ? numberFormat.format(Math.ceil(100 * (Math.pow(1.26, 48)) + 200 * 50)) : Math.ceil(100 * (Math.pow(1.26, combatLevelScore.getScore()))) + 200 * (combatLevelScore.getScore())) + ")";
+            String combatXpmessage = "§3+" + miningXPAdd + " Mining (" + numberFormat.format(combatXp) + "/" + numberFormat.format(combatLevel == 50 ? numberFormat.format(Math.ceil(100 * (Math.pow(1.26, 48)) + 200 * 50)) : Math.ceil(100 * (Math.pow(1.26, combatLevel))) + 200 * (combatLevel)) + ")";
             player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 2, 2);
 
             PacketPlayOutChat packet = new PacketPlayOutChat(IChatBaseComponent.ChatSerializer.a("{\"text\":\"" + combatXpmessage + "\"}"), ChatMessageType.GAME_INFO, UUID.randomUUID());
@@ -1980,52 +2005,21 @@ public class DefenseNerf implements Listener {
                 }
             }, 40);
 
-            if (combatXpScore.getScore() >= Math.ceil(100 * (Math.pow(1.26, combatLevelScore.getScore())) + 200 * (combatLevelScore.getScore())) && (combatLevelScore.getScore() < 50)) {
-                player.sendMessage(ChatColor.DARK_AQUA + "--------------------------------------\n" + ChatColor.AQUA + "" + ChatColor.BOLD + " SKILL LEVEL UP" + ChatColor.RESET + ""
-                        + ChatColor.DARK_AQUA + " Mining " + ChatColor.DARK_GRAY + combatLevelScore.getScore() + "→ " + ChatColor.DARK_AQUA + (combatLevelScore.getScore() + 1) + ChatColor.GREEN + "" + ChatColor.BOLD + "\n Rewards\n  " + ChatColor.RESET + "" + ChatColor.DARK_GRAY + "+" + ChatColor.GREEN + "0.5 ❈ Defense\n" + ChatColor.DARK_AQUA + "--------------------------------------\n");
-                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 0);
-                combatLevelScore.setScore(combatLevelScore.getScore() + 1);
 
-
-                UUID uuid = UUID.fromString("de1c2a12-e421-41f9-8728-d8556e7fde60");
-
-                for (AttributeModifier attribute :  player.getAttribute(Attribute.GENERIC_ARMOR).getModifiers()) {
-                    if (attribute.getName().equals("miningSkill")) {
-                        player.getAttribute(Attribute.GENERIC_ARMOR).removeModifier(attribute);
-
-                    }
-
-                }
-                player.getAttribute(Attribute.GENERIC_ARMOR).addModifier(new AttributeModifier(uuid, "miningSkill", 0.5*combatLevelScore.getScore(), AttributeModifier.Operation.ADD_NUMBER));
-
-            }
         }
 
         if (farmingXPAdd > 0) {
 
-            Objective combatXp = scoreboard.getObjective("farmingXP");
-            Objective combatLevel = scoreboard.getObjective("farmingLevel");
-
-
-            Score combatXpScore = combatXp.getScore(player);
-            Score combatLevelScore = combatLevel.getScore(player);
-
-            if (combatXpScore == null) {
-                combatXpScore.setScore(0);
-            }
-
-            if (combatLevelScore == null) {
-                combatLevelScore.setScore(0);
-            }
+            float combatXp = ColeCrafterSlayers.getSkillXP(player, "farming");
+            float combatLevel = ColeCrafterSlayers.getSkillLevel(player, "farming");
 
 
 
 
+            ColeCrafterSlayers.setSkillXP(player, "farming", combatXp + farmingXPAdd);
 
 
-            combatXpScore.setScore(combatXp.getScore(player).getScore() + farmingXPAdd);
-
-            String combatXpmessage = "§3+" + farmingXPAdd  + " Farming (" + numberFormat.format(combatXpScore.getScore()) + "/" + numberFormat.format(combatLevelScore.getScore() == 50 ? Math.ceil(100 * (Math.pow(1.26, 48)) + 400 * 50) : Math.ceil(100 * (Math.pow(1.26, combatLevelScore.getScore()))) + 400 * (combatLevelScore.getScore())) + ")";
+            String combatXpmessage = "§3+" + farmingXPAdd  + " Farming (" + numberFormat.format(combatXp) + "/" + numberFormat.format(combatLevel == 50 ? Math.ceil(100 * (Math.pow(1.26, 48)) + 400 * 50) : Math.ceil(100 * (Math.pow(1.26, combatLevel))) + 400 * (combatLevel)) + ")";
             player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 2, 2);
 
             PacketPlayOutChat packet = new PacketPlayOutChat(IChatBaseComponent.ChatSerializer.a("{\"text\":\"" + combatXpmessage + "\"}"), ChatMessageType.GAME_INFO, UUID.randomUUID());
@@ -2040,52 +2034,22 @@ public class DefenseNerf implements Listener {
                 }
             }, 40);
 
-            if (combatXpScore.getScore() >= Math.ceil(100 * (Math.pow(1.26, combatLevelScore.getScore())) + 400 * (combatLevelScore.getScore())) && (combatLevelScore.getScore() < 50)) {
-                player.sendMessage(ChatColor.DARK_AQUA + "--------------------------------------\n" + ChatColor.AQUA + "" + ChatColor.BOLD + " SKILL LEVEL UP" + ChatColor.RESET + ""
-                        + ChatColor.DARK_AQUA + " Farming " + ChatColor.DARK_GRAY + combatLevelScore.getScore() + "→ " + ChatColor.DARK_AQUA + (combatLevelScore.getScore() + 1) + ChatColor.GREEN + "" + ChatColor.BOLD + "\n Rewards\n  " + ChatColor.RESET + "" + ChatColor.DARK_GRAY + "+" + ChatColor.RED + "0.2 ❤ Health\n" + ChatColor.DARK_AQUA + "--------------------------------------\n");
-                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 0);
-                combatLevelScore.setScore(combatLevelScore.getScore() + 1);
 
-
-                UUID uuid = UUID.fromString("c455ce96-55c0-46c0-904f-f2dae31f710c");
-
-                for (AttributeModifier attribute :  player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getModifiers()) {
-                    if (attribute.getName().equals("farmingSkill")) {
-                        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).removeModifier(attribute);
-
-                    }
-
-                }
-                player.getAttribute(Attribute.GENERIC_MAX_HEALTH).addModifier(new AttributeModifier(uuid, "farmingSkill", 0.2*combatLevelScore.getScore(), AttributeModifier.Operation.ADD_NUMBER));
-
-            }
         }
 
         if (forgagingXPAdd > 0) {
 
-            Objective combatXp = scoreboard.getObjective("foragingXP");
-            Objective combatLevel = scoreboard.getObjective("foragingLevel");
-
-
-            Score combatXpScore = combatXp.getScore(player);
-            Score combatLevelScore = combatLevel.getScore(player);
-
-            if (combatXpScore == null) {
-                combatXpScore.setScore(0);
-            }
-
-            if (combatLevelScore == null) {
-                combatLevelScore.setScore(0);
-            }
+            float combatXp = ColeCrafterSlayers.getSkillXP(player, "foraging");
+            float combatLevel = ColeCrafterSlayers.getSkillLevel(player, "foraging");
 
 
 
 
 
+            ColeCrafterSlayers.setSkillXP(player, "foraging", combatXp + forgagingXPAdd);
 
-            combatXpScore.setScore(combatXp.getScore(player).getScore() + forgagingXPAdd);
 
-            String combatXpmessage = "§3+" + forgagingXPAdd  + " Foraging (" + numberFormat.format(combatXpScore.getScore()) + "/" + numberFormat.format(combatLevelScore.getScore() == 50 ? Math.ceil(100 * (Math.pow(1.26, 48)) + 400 * 50) : Math.ceil(100 * (Math.pow(1.26, combatLevelScore.getScore()))) + 400 * (combatLevelScore.getScore())) + ")";
+            String combatXpmessage = "§3+" + forgagingXPAdd  + " Foraging (" + numberFormat.format(combatXp) + "/" + numberFormat.format(combatLevel == 50 ? Math.ceil(100 * (Math.pow(1.26, 48)) + 400 * 50) : Math.ceil(100 * (Math.pow(1.26, combatLevel))) + 400 * (combatLevel)) + ")";
             player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 2, 2);
 
             PacketPlayOutChat packet = new PacketPlayOutChat(IChatBaseComponent.ChatSerializer.a("{\"text\":\"" + combatXpmessage + "\"}"), ChatMessageType.GAME_INFO, UUID.randomUUID());
@@ -2100,25 +2064,7 @@ public class DefenseNerf implements Listener {
                 }
             }, 40);
 
-            if (combatXpScore.getScore() >= Math.ceil(100 * (Math.pow(1.26, combatLevelScore.getScore())) + 400 * (combatLevelScore.getScore())) && (combatLevelScore.getScore() < 50)) {
-                player.sendMessage(ChatColor.DARK_AQUA + "--------------------------------------\n" + ChatColor.AQUA + "" + ChatColor.BOLD + " SKILL LEVEL UP" + ChatColor.RESET + ""
-                        + ChatColor.DARK_AQUA + " Foraging " + ChatColor.DARK_GRAY + combatLevelScore.getScore() + "→ " + ChatColor.DARK_AQUA + (combatLevelScore.getScore() + 1) + ChatColor.GREEN + "" + ChatColor.BOLD + "\n Rewards\n  " + ChatColor.RESET + "" + ChatColor.DARK_GRAY + "+" + ChatColor.RED + "0.25 ❁ Damage\n" + ChatColor.DARK_AQUA + "--------------------------------------\n");
-                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 0);
-                combatLevelScore.setScore(combatLevelScore.getScore() + 1);
 
-
-                UUID uuid = UUID.fromString("1f40a901-c26e-4144-b02e-e704c609b9e6");
-
-                for (AttributeModifier attribute :  player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getModifiers()) {
-                    if (attribute.getName().equals("foragingSkill")) {
-                        player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).removeModifier(attribute);
-
-                    }
-
-                }
-                player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).addModifier(new AttributeModifier(uuid, "foragingSkill", 0.25*combatLevelScore.getScore(), AttributeModifier.Operation.ADD_NUMBER));
-
-            }
         }
 
 
@@ -2335,4 +2281,8 @@ public class DefenseNerf implements Listener {
         e.execute();
     }
 
+    @EventHandler
+    public void onCustomBossDeath(CustomBossDeathEvent e) {
+        e.execute();
+    }
 }

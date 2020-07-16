@@ -13,6 +13,7 @@ import com.Rexe0.Items.Wands.WandOfHealing;
 import com.Rexe0.Items.Wands.WandOfMending;
 import com.Rexe0.Items.Wands.WandOfRejuvenation;
 import com.Rexe0.Items.Wands.WandOfRestoration;
+import com.Rexe0.Mobs.CustomMob;
 import com.Rexe0.Skull;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
@@ -48,6 +49,7 @@ public class SlayerMenu implements Listener {
     public static HashMap<Player, Inventory> zombieSlayerMenu = new HashMap<>();
     public static HashMap<LivingEntity, Player> revenantHorrorPlayer = new HashMap<>();
     public static HashMap<Player, Inventory> bankerInv = new HashMap<>();
+    public static Player magmaBossSummoner;
 
 
 
@@ -245,7 +247,8 @@ public class SlayerMenu implements Listener {
                 e.getPlayer().performCommand("anvil");
             }
         }
-        ItemStack item = e.getItem();
+        ItemStack item = e.getPlayer().getEquipment().getItemInMainHand();
+
         if (item == null) return;
         if (!item.hasItemMeta()) return;
         NamespacedKey key = new NamespacedKey(ColeCrafterSlayers.getInstance(), "itemID");
@@ -265,6 +268,100 @@ public class SlayerMenu implements Listener {
 
         if (foundValue.equals("ROGUE_SWORD")) {
             RogueSword.use(e.getAction(), e.getPlayer());
+        }
+
+        if (foundValue.equals("MOLTEN_CORE")) {
+            boolean alreadyMagmaBoss = false;
+            for (Entity en : e.getPlayer().getNearbyEntities(250, 250, 250)) {
+                if (en instanceof MagmaCube) {
+
+
+                    NamespacedKey key1 = new NamespacedKey(ColeCrafterSlayers.getInstance(), "mobID");
+
+                    PersistentDataContainer container1 = en.getPersistentDataContainer();
+
+                    String foundValue1 = null;
+                    if (container1.has(key1, PersistentDataType.STRING)) {
+                        foundValue1 = container1.get(key1, PersistentDataType.STRING);
+                    }
+
+                    if (foundValue1 != null) {
+                        if (foundValue1.equals("MAGMA_CUBE_BOSS")) {
+                            alreadyMagmaBoss = true;
+                        }
+                    }
+                }
+            }
+            if (magmaBossSummoner != null) alreadyMagmaBoss = true;
+
+            if (alreadyMagmaBoss) {
+                e.getPlayer().sendMessage(ChatColor.RED+ "There is already a magma cube boss alive or being summoned.");
+            } else {
+                magmaBossSummoner = e.getPlayer();
+                for (Entity en : e.getPlayer().getNearbyEntities(150, 150, 150)) {
+                    if (en instanceof Player) {
+                        en.sendMessage(ChatColor.RED + "" + ChatColor.ITALIC + "A molten hot behemoth is rising from the ground...");
+                    }
+                }
+
+                Player player = e.getPlayer();
+                player.sendMessage(ChatColor.RED + "" + ChatColor.ITALIC + "A molten hot behemoth is rising from the ground...");
+                Location loc = player.getLocation();
+
+
+                ItemStack hand = player.getEquipment().getItemInMainHand();
+                int amount = hand.getAmount();
+
+                if (amount > 1) {
+                    hand.setAmount(amount - 1);
+                    player.getEquipment().setItemInMainHand(hand);
+                } else {
+                    player.getEquipment().setItemInMainHand(new ItemStack(Material.AIR));
+                }
+
+                int particleID = ColeCrafterSlayers.scheduleSyncLoop(new Runnable() {
+                    @Override
+                    public void run() {
+                        loc.getWorld().spawnParticle(Particle.FLAME, loc, 5000, 20, 20, 20, 0);
+                        for (Entity en : player.getNearbyEntities(150, 150, 150)) {
+                            if (en instanceof MagmaCube) {
+                                Location origin = en.getLocation();
+
+
+                                Location target1 = loc;
+                                target1.setY(loc.getY());
+                                Vector target = target1.toVector();
+                                origin.setDirection((target.subtract(origin.toVector())));
+
+
+                                ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        en.setVelocity(origin.getDirection().normalize());
+                                    }
+                                }, 1);
+
+                            }
+                        }
+                    }
+                }, 1, 15);
+
+                ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
+                    @Override
+                    public void run() {
+                        Bukkit.getScheduler().cancelTask(particleID);
+                        for (Entity en : e.getPlayer().getNearbyEntities(150, 150, 150)) {
+                            if (en instanceof Player) {
+                                en.sendMessage(ChatColor.RED+"The"+ChatColor.GOLD+" Magma Cube Boss "+ChatColor.RED+"has spawned");
+                                ((Player) en).playSound(loc, Sound.ENTITY_WITHER_SPAWN, 2 ,1);
+                            }
+                        }
+                        CustomMob.spawnMob("MAGMA_CUBE_BOSS", loc);
+                        player.sendMessage(ChatColor.RED+"The"+ChatColor.GOLD+" Magma Cube Boss "+ChatColor.RED+"has spawned");
+                        player.playSound(loc, Sound.ENTITY_WITHER_SPAWN, 2 ,1);
+                    }
+                }, 600);
+            }
         }
 
         if (foundValue.equals("ASPECT_OF_THE_JERRY")) {

@@ -77,24 +77,7 @@ public class ColeCrafterSlayers extends JavaPlugin {
         return Bukkit.getScheduler().scheduleSyncRepeatingTask(instance, runnable, delay, period);
     }
 
-    public static double getSkillXP(String skill) {
 
-        return 0;
-    }
-
-
-    public static double getSkillLevel(String skill) {
-        return 0;
-    }
-
-    public static void setSkillXP(String skill, double amount) {
-
-
-    }
-
-    public static void setSkillLevel(String skill, double amount) {
-
-    }
 
     public static void setCoins(Player player, long amount) {
         NamespacedKey ItemIDKey = new NamespacedKey(ColeCrafterSlayers.getInstance(), "coins");
@@ -116,6 +99,131 @@ public class ColeCrafterSlayers extends JavaPlugin {
 
     }
 
+    public static void setSkillXP(Player player, String name, float amount) {
+        NamespacedKey ItemIDKey = new NamespacedKey(ColeCrafterSlayers.getInstance(), name+"XP");
+
+        player.getPersistentDataContainer().set(ItemIDKey, PersistentDataType.FLOAT, amount);
+
+        float xp = ColeCrafterSlayers.getSkillXP(player, name);
+        int level = (int) ColeCrafterSlayers.getSkillLevel(player, name);
+        if (name.equals("combat")) {
+            if (xp >= Math.ceil(100*(Math.pow(1.26, level))+300*(level)) && (level < 50)) {
+                player.sendMessage(ChatColor.DARK_AQUA+"--------------------------------------\n"+ChatColor.AQUA+""+ChatColor.BOLD+" SKILL LEVEL UP"+ChatColor.RESET+""
+                        +ChatColor.DARK_AQUA+" Combat "+ChatColor.DARK_GRAY+level+"→ "+ChatColor.DARK_AQUA+(level+1)+ChatColor.GREEN+""+ChatColor.BOLD+"\n Rewards\n  "+ChatColor.RESET+""+ChatColor.DARK_GRAY+"+"+ChatColor.GREEN+"0.25"+ChatColor.RED+" ❁ Damage\n"+ChatColor.DARK_AQUA+"--------------------------------------\n");
+                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 0);
+                setSkillLevel(player, "combat", level+1);
+
+
+                UUID uuid = UUID.fromString("41c90f75-20ea-4f77-997a-db7a3f9d35a5");
+
+                for (AttributeModifier attribute :  player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getModifiers()) {
+                    if (attribute.getName().equals("combatSkill")) {
+                        player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).removeModifier(attribute);
+
+                    }
+
+                }
+                player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).addModifier(new AttributeModifier(uuid, "combatSkill", 0.25*level, AttributeModifier.Operation.ADD_NUMBER));
+
+            }
+
+        } else if (name.equals("farming")) {
+            if (xp >= Math.ceil(100 * (Math.pow(1.26, level)) + 400 * (level)) && (level < 50)) {
+                player.sendMessage(ChatColor.DARK_AQUA + "--------------------------------------\n" + ChatColor.AQUA + "" + ChatColor.BOLD + " SKILL LEVEL UP" + ChatColor.RESET + ""
+                        + ChatColor.DARK_AQUA + " Farming " + ChatColor.DARK_GRAY + level + "→ " + ChatColor.DARK_AQUA + (level + 1) + ChatColor.GREEN + "" + ChatColor.BOLD + "\n Rewards\n  " + ChatColor.RESET + "" + ChatColor.DARK_GRAY + "+" + ChatColor.RED + "0.2 ❤ Health\n" + ChatColor.DARK_AQUA + "--------------------------------------\n");
+                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 0);
+                setSkillLevel(player, "farming", level + 1);
+
+
+                UUID uuid = UUID.fromString("c455ce96-55c0-46c0-904f-f2dae31f710c");
+
+                for (AttributeModifier attribute :  player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getModifiers()) {
+                    if (attribute.getName().equals("farmingSkill")) {
+                        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).removeModifier(attribute);
+
+                    }
+
+                }
+                player.getAttribute(Attribute.GENERIC_MAX_HEALTH).addModifier(new AttributeModifier(uuid, "farmingSkill", 0.2*level, AttributeModifier.Operation.ADD_NUMBER));
+
+            }
+        } else if (name.equals("foraging")) {
+            if (xp >= Math.ceil(100 * (Math.pow(1.26, level)) + 400 * (level)) && (level < 50)) {
+                player.sendMessage(ChatColor.DARK_AQUA + "--------------------------------------\n" + ChatColor.AQUA + "" + ChatColor.BOLD + " SKILL LEVEL UP" + ChatColor.RESET + ""
+                        + ChatColor.DARK_AQUA + " Foraging " + ChatColor.DARK_GRAY + level + "→ " + ChatColor.DARK_AQUA + (level + 1) + ChatColor.GREEN + "" + ChatColor.BOLD + "\n Rewards\n  " + ChatColor.RESET + "" + ChatColor.DARK_GRAY + "+" + ChatColor.RED + "0.25 ❁ Damage\n" + ChatColor.DARK_AQUA + "--------------------------------------\n");
+                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 0);
+                setSkillLevel(player, "foraging", level + 1);
+
+
+                UUID uuid = UUID.fromString("1f40a901-c26e-4144-b02e-e704c609b9e6");
+
+                for (AttributeModifier attribute :  player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getModifiers()) {
+                    if (attribute.getName().equals("foragingSkill")) {
+                        player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).removeModifier(attribute);
+
+                    }
+
+                }
+                player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).addModifier(new AttributeModifier(uuid, "foragingSkill", 0.25*level, AttributeModifier.Operation.ADD_NUMBER));
+
+            }
+        } else if (name.equals("mining")) {
+            if (xp >= Math.ceil(100 * (Math.pow(1.26, level)) + 200 * (level)) && (level < 50)) {
+                player.sendMessage(ChatColor.DARK_AQUA + "--------------------------------------\n" + ChatColor.AQUA + "" + ChatColor.BOLD + " SKILL LEVEL UP" + ChatColor.RESET + ""
+                        + ChatColor.DARK_AQUA + " Mining " + ChatColor.DARK_GRAY + level + "→ " + ChatColor.DARK_AQUA + (level + 1) + ChatColor.GREEN + "" + ChatColor.BOLD + "\n Rewards\n  " + ChatColor.RESET + "" + ChatColor.DARK_GRAY + "+" + ChatColor.GREEN + "0.5 ❈ Defense\n" + ChatColor.DARK_AQUA + "--------------------------------------\n");
+                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 0);
+                setSkillLevel(player, "mining", level + 1);
+
+
+                UUID uuid = UUID.fromString("de1c2a12-e421-41f9-8728-d8556e7fde60");
+
+                for (AttributeModifier attribute :  player.getAttribute(Attribute.GENERIC_ARMOR).getModifiers()) {
+                    if (attribute.getName().equals("miningSkill")) {
+                        player.getAttribute(Attribute.GENERIC_ARMOR).removeModifier(attribute);
+
+                    }
+
+                }
+                player.getAttribute(Attribute.GENERIC_ARMOR).addModifier(new AttributeModifier(uuid, "miningSkill", 0.5*level, AttributeModifier.Operation.ADD_NUMBER));
+
+            }
+        }
+    }
+
+    public static float getSkillXP(Player player, String name) {
+        NamespacedKey key = new NamespacedKey(ColeCrafterSlayers.getInstance(), name+"XP");
+
+        PersistentDataContainer container = player.getPersistentDataContainer();
+
+        float foundValue = 0;
+        if (container.has(key, PersistentDataType.FLOAT)) {
+            foundValue = container.get(key, PersistentDataType.FLOAT);
+        }
+
+        return foundValue;
+
+    }
+
+    public static void setSkillLevel(Player player, String name, float amount) {
+        NamespacedKey ItemIDKey = new NamespacedKey(ColeCrafterSlayers.getInstance(), name+"LEVEL");
+
+        player.getPersistentDataContainer().set(ItemIDKey, PersistentDataType.FLOAT, amount);
+    }
+
+    public static float getSkillLevel(Player player, String name) {
+        NamespacedKey key = new NamespacedKey(ColeCrafterSlayers.getInstance(), name+"LEVEL");
+
+        PersistentDataContainer container = player.getPersistentDataContainer();
+
+        float foundValue = 0;
+        if (container.has(key, PersistentDataType.FLOAT)) {
+            foundValue = container.get(key, PersistentDataType.FLOAT);
+        }
+
+        return foundValue;
+
+    }
+
     public static long getBank(Player player) {
         NamespacedKey key = new NamespacedKey(ColeCrafterSlayers.getInstance(), "bank");
 
@@ -124,6 +232,32 @@ public class ColeCrafterSlayers extends JavaPlugin {
         long foundValue = 0;
         if (container.has(key, PersistentDataType.LONG)) {
             foundValue = container.get(key, PersistentDataType.LONG);
+        }
+
+        return foundValue;
+    }
+
+    public static String getMobType(LivingEntity player) {
+        NamespacedKey key = new NamespacedKey(ColeCrafterSlayers.getInstance(), "mobType");
+
+        PersistentDataContainer container = player.getPersistentDataContainer();
+
+        String foundValue = null;
+        if (container.has(key, PersistentDataType.STRING)) {
+            foundValue = container.get(key, PersistentDataType.STRING);
+        }
+
+        return foundValue;
+    }
+
+    public static String getMobID(LivingEntity player) {
+        NamespacedKey key = new NamespacedKey(ColeCrafterSlayers.getInstance(), "mobID");
+
+        PersistentDataContainer container = player.getPersistentDataContainer();
+
+        String foundValue = null;
+        if (container.has(key, PersistentDataType.STRING)) {
+            foundValue = container.get(key, PersistentDataType.STRING);
         }
 
         return foundValue;
@@ -567,7 +701,7 @@ public class ColeCrafterSlayers extends JavaPlugin {
         Scoreboard scoreboard = manager.getMainScoreboard();
 
         if (scoreboard.getObjective("combatXP") == null) scoreboard.registerNewObjective("combatXP", "dummy", "CombatXP");
-        if (scoreboard.getObjective("combatLevel") == null) scoreboard.registerNewObjective("combatLevel", "dummy", "CombatLevel");
+        if (scoreboard.getObjective("level") == null) scoreboard.registerNewObjective("level", "dummy", "CombatLevel");
 
         if (scoreboard.getObjective("miningXP") == null) scoreboard.registerNewObjective("miningXP", "dummy", "MiningXP");
         if (scoreboard.getObjective("miningLevel") == null) scoreboard.registerNewObjective("miningLevel", "dummy", "MiningLevel");

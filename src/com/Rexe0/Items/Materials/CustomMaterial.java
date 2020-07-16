@@ -41,6 +41,10 @@ public class CustomMaterial extends ItemStack {
 
         meta.getPersistentDataContainer().set(ItemIDKey, PersistentDataType.STRING, itemID);
 
+        NamespacedKey rarityKey = new NamespacedKey(ColeCrafterSlayers.getInstance(), "rarity");
+
+        meta.getPersistentDataContainer().set(rarityKey, PersistentDataType.STRING, rarity);
+
         NamespacedKey ItemTypeKey = new NamespacedKey(ColeCrafterSlayers.getInstance(), "itemType");
 
         meta.getPersistentDataContainer().set(ItemTypeKey, PersistentDataType.STRING, "MATERIAL");
@@ -192,6 +196,8 @@ public class CustomMaterial extends ItemStack {
                 return new MagmaCream();
             case "ENCHANTED_MAGMA_CREAM":
                 return new EnchantedMagmaCream();
+            case "NETHERITE_SCRAP":
+                return new NetheriteScrap();
             default:
                 return null;
         }

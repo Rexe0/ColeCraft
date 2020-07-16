@@ -5,8 +5,15 @@ import com.Rexe0.ColeCrafterSlayers;
 import com.Rexe0.DefenseNerf;
 import com.Rexe0.Items.CustomItem;
 import com.Rexe0.Items.Materials.CustomMaterial;
+import net.minecraft.server.v1_16_R1.Block;
+import net.minecraft.server.v1_16_R1.BlockPosition;
+import net.minecraft.server.v1_16_R1.PacketPlayOutBlockChange;
+import net.minecraft.server.v1_16_R1.PacketPlayOutEntityDestroy;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_16_R1.util.CraftMagicNumbers;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -14,6 +21,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,7 +72,7 @@ public class CustomBossDeathEvent extends Event implements Cancellable {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 this.damagePerPlayer.putIfAbsent(player, 0f);
                 float damage = this.damagePerPlayer.get(player);
-                if (damage > damage1) {
+                if (damage > damage1 && !first.equals(player)) {
                     damage1 = damage;
                     second = (Player) player;
                 }
@@ -78,7 +86,7 @@ public class CustomBossDeathEvent extends Event implements Cancellable {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 this.damagePerPlayer.putIfAbsent(player, 0f);
                 float damage = this.damagePerPlayer.get(player);
-                if (damage > damage1) {
+                if (damage > damage1 && !first.equals(player) && !second.equals(player)) {
                     damage1 = damage;
                     third = (Player) player;
                 }
@@ -92,7 +100,7 @@ public class CustomBossDeathEvent extends Event implements Cancellable {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 this.damagePerPlayer.putIfAbsent(player, 0f);
                 float damage = this.damagePerPlayer.get(player);
-                if (damage > damage1) {
+                if (damage > damage1 && !first.equals(player) && !second.equals(player) && !third.equals(player)) {
                     damage1 = damage;
                     forth = (Player) player;
                 }
@@ -114,7 +122,7 @@ public class CustomBossDeathEvent extends Event implements Cancellable {
             } else if (third == null) {
                 p.sendMessage((ChatColor.GREEN + "" + ChatColor.BOLD + "-----------------------------------------\n" + ChatColor.GOLD + "" + ChatColor.BOLD + "              "+BossName+" DOWN!\n \n" + ChatColor.RESET + "                  " + ChatColor.GOLD + this.lastHit.getName() + ChatColor.GRAY + " dealt the final blow.\n \n" + ChatColor.YELLOW + ChatColor.BOLD + "              1st Damager" + ChatColor.GRAY + " - " + ChatColor.GOLD + first.getName() + " " + ChatColor.GREEN + this.damagePerPlayer.get(first) + ChatColor.GOLD + ChatColor.BOLD + "\n              2nd Damager" + ChatColor.GRAY + " - " + ChatColor.GOLD + second.getName() + " " + ChatColor.GREEN + this.damagePerPlayer.get(second) + ChatColor.YELLOW + "\n \n              Your Damage: " + ChatColor.GREEN + damage + ChatColor.GREEN + "\n \n" + ChatColor.BOLD + "-----------------------------------------"));
             } else {
-                p.sendMessage((ChatColor.GREEN + "" + ChatColor.BOLD + "-----------------------------------------\n" + ChatColor.GOLD + "" + ChatColor.BOLD + "              "+BossName+" DOWN!\n \n" + ChatColor.RESET + "                  " + ChatColor.GOLD + this.lastHit.getName() + ChatColor.GRAY + " dealt the final blow.\n \n" + ChatColor.YELLOW + ChatColor.BOLD + "              1st Damager" + ChatColor.GRAY + " - " + ChatColor.GOLD + first.getName() + " " + ChatColor.GREEN + this.damagePerPlayer.get(first) + ChatColor.GOLD + ChatColor.BOLD + "\n              2nd Damager" + ChatColor.GRAY + " - " + ChatColor.GOLD + second.getName() + " " + ChatColor.GREEN + this.damagePerPlayer.get(second) + ChatColor.GOLD + ChatColor.BOLD + "\n              3rd Damager" + ChatColor.GRAY + " - " + ChatColor.GOLD + third.getName() + " " + ChatColor.GREEN + this.damagePerPlayer.get(third) + ChatColor.YELLOW + "\n \n              Your Damage: " + ChatColor.GREEN + damage + ChatColor.GREEN + "\n \n" + ChatColor.BOLD + "-----------------------------------------"));
+                p.sendMessage((ChatColor.GREEN + "" + ChatColor.BOLD + "-----------------------------------------\n" + ChatColor.GOLD + "" + ChatColor.BOLD + "              "+BossName+" DOWN!\n \n" + ChatColor.RESET + "                  " + ChatColor.GOLD + this.lastHit.getName() + ChatColor.GRAY + " dealt the final blow.\n \n" + ChatColor.YELLOW + ChatColor.BOLD + "              1st Damager" + ChatColor.GRAY + " - " + ChatColor.GOLD + first.getName() + " " + ChatColor.GREEN + this.damagePerPlayer.get(first) + ChatColor.GOLD + ChatColor.BOLD + "\n              2nd Damager" + ChatColor.GRAY + " - " + ChatColor.GOLD + second.getName() + " " + ChatColor.GREEN + this.damagePerPlayer.get(second) + ChatColor.RED + ChatColor.BOLD + "\n              3rd Damager" + ChatColor.GRAY + " - " + ChatColor.GOLD + third.getName() + " " + ChatColor.GREEN + this.damagePerPlayer.get(third) + ChatColor.YELLOW + "\n \n              Your Damage: " + ChatColor.GREEN + damage + ChatColor.GREEN + "\n \n" + ChatColor.BOLD + "-----------------------------------------"));
 
             }
         }
@@ -128,13 +136,27 @@ public class CustomBossDeathEvent extends Event implements Cancellable {
             }
 
             for (Map.Entry<Player, Float> entry : this.damagePerPlayer.entrySet()) {
-                if (first.equals(entry.getKey())) {
+                totalWeight.putIfAbsent(entry.getKey(), (short) 0);
+                int numbers = 0;
+                if (first != null) numbers = 1;
+
+
+                if (second != null) numbers = 2;
+
+
+                if (third != null) numbers = 3;
+
+
+                if (forth != null) numbers = 4;
+
+
+                if (first.equals(entry.getKey()) && numbers >= 1) {
                     totalWeight.put(entry.getKey(), (short) (totalWeight.get(entry.getKey())+150));
-                } else if (second.equals(entry.getKey())) {
+                } else if (second.equals(entry.getKey()) && numbers >= 2) {
                     totalWeight.put(entry.getKey(), (short) (totalWeight.get(entry.getKey())+100));
-                } else if (third.equals(entry.getKey())) {
+                } else if (third.equals(entry.getKey()) && numbers >= 3) {
                     totalWeight.put(entry.getKey(), (short) (totalWeight.get(entry.getKey())+75));
-                } else if (forth.equals(entry.getKey())) {
+                } else if (forth.equals(entry.getKey()) && numbers >= 4) {
                     totalWeight.put(entry.getKey(), (short) (totalWeight.get(entry.getKey())+50));
                 } else {
                     totalWeight.put(entry.getKey(), (short) (totalWeight.get(entry.getKey())+25));
@@ -218,30 +240,158 @@ public class CustomBossDeathEvent extends Event implements Cancellable {
         for (int i = deathLoc.getBlockY(); i > 0; i--) {
             if (entity.getWorld().getBlockAt(deathLoc.getBlockX(), i, deathLoc.getBlockZ()).getType().isSolid()) {
                 loc = new Location(deathLoc.getWorld(),deathLoc.getBlockX(), i, deathLoc.getBlockZ());
+                break;
             }
         }
 
 
         if (loc != null) {
             for (Player p : Bukkit.getOnlinePlayers()) {
-                int radius = 7;
-                for (int x = -radius; x <= radius; x++) {
-                    for (int z = -radius; z <= radius; z++) {
-                        loc.getWorld().getBlockAt(loc.getBlockX() + x, loc.getBlockY(), loc.getBlockX() + z).setType(Material.YELLOW_TERRACOTTA);
+                int r = 7;
+                int cx = loc.getBlockX();
+                int cy = loc.getBlockY();
+                int cz = loc.getBlockZ();
+                World w = loc.getWorld();
+                int rSquared = r * r;
+                for (int x = cx - r; x <= cx +r; x++) {
+                    for (int z = cz - r; z <= cz +r; z++) {
+                        if ((cx - x) * (cx - x) + (cz - z) * (cz - z) <= rSquared) {
+                            Location loc1 = new Location(loc.getWorld(), x, cy, z);
+
+                            new BukkitRunnable() {
+                                @Override
+                                public void run() {
+
+                                    BlockPosition blockPosition = new BlockPosition(loc1.getBlockX(), loc1.getBlockY(), loc1.getBlockZ());
+                                    PacketPlayOutBlockChange packet = new PacketPlayOutBlockChange(((CraftWorld) loc1.getWorld()).getHandle(), blockPosition);
+                                    net.minecraft.server.v1_16_R1.Block nmsBlock = CraftMagicNumbers.getBlock(Material.YELLOW_TERRACOTTA);
+                                    packet.block = nmsBlock.getBlockData();
+                                    ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
+                                }
+                            }.runTaskAsynchronously(ColeCrafterSlayers.getInstance());
+                        }
                     }
                 }
+                Location finalLoc = loc;
+                ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (int x = cx - r; x <= cx +r; x++) {
+                            for (int z = cz - r; z <= cz +r; z++) {
+                                if ((cx - x) * (cx - x) + (cz - z) * (cz - z) <= rSquared) {
+                                    Location loc1 = new Location(finalLoc.getWorld(), x, cy, z);
 
-                p.sendBlockChange(loc, Material.ORANGE_STAINED_GLASS.createBlockData());
-                p.sendBlockChange(new Location(loc.getWorld(), loc.getBlockX(), loc.getBlockY()-2,loc.getBlockZ()), Material.BEACON.createBlockData());
+                                    new BukkitRunnable() {
+                                        @Override
+                                        public void run() {
+
+                                            BlockPosition blockPosition = new BlockPosition(loc1.getBlockX(), loc1.getBlockY(), loc1.getBlockZ());
+                                            Material mat = w.getBlockAt(new Location(w, loc1.getBlockX(), loc1.getBlockY(), loc1.getBlockZ())).getType();
+                                            PacketPlayOutBlockChange packet = new PacketPlayOutBlockChange(((CraftWorld) loc1.getWorld()).getHandle(), blockPosition);
+                                            net.minecraft.server.v1_16_R1.Block nmsBlock = CraftMagicNumbers.getBlock(mat);
+                                            packet.block = nmsBlock.getBlockData();
+                                            ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
+                                        }
+                                    }.runTaskAsynchronously(ColeCrafterSlayers.getInstance());
+                                }
+                            }
+                        }
+                    }
+                }, 600);
+
+
+
+                ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
+                    @Override
+                    public void run() {
+                        p.sendBlockChange(finalLoc, Material.ORANGE_STAINED_GLASS.createBlockData());
+                    }
+                }, 5);
+
+                p.sendBlockChange(new Location(loc.getWorld(), loc.getBlockX(), loc.getBlockY()-1,loc.getBlockZ()), Material.BEACON.createBlockData());
 
                 for (int x = -1; x <= 1; x++) {
                     for (int z = -1; z <= 1; z++) {
-                        loc.getWorld().getBlockAt(loc.getBlockX() + x, loc.getBlockY()-2, loc.getBlockX() + z).setType(Material.IRON_BLOCK);
+                        Location loc1 = new Location(loc.getWorld(), loc.getBlockX() + x, loc.getBlockY()-2, loc.getBlockZ() + z);
+                        /*
+                         * Created by ColonelHedgehog.
+                         * 11/11/15
+                         */
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+
+                                BlockPosition blockPosition = new BlockPosition(loc1.getBlockX(), loc1.getBlockY(), loc1.getBlockZ());
+                                PacketPlayOutBlockChange packet = new PacketPlayOutBlockChange(((CraftWorld) loc1.getWorld()).getHandle(), blockPosition);
+                                net.minecraft.server.v1_16_R1.Block nmsBlock = CraftMagicNumbers.getBlock(Material.IRON_BLOCK);
+                                packet.block = nmsBlock.getBlockData();
+                                ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
+                            }
+                        }.runTaskAsynchronously(ColeCrafterSlayers.getInstance());
 
                     }
                 }
             }
 
+
+
+
+            for (Map.Entry<Player, ArrayList<ItemStack>> entry : loot.entrySet()) {
+                entry.getKey().sendMessage(entry.getKey().getName());
+                ArrayList<Item> reservedItems = new ArrayList<>();
+                if (DefenseNerf.playerSpecificPickup.get(entry.getKey()) != null) reservedItems = DefenseNerf.playerSpecificPickup.get(entry.getKey());
+
+                for (ItemStack item : entry.getValue()) {
+                    entry.getKey().sendMessage(item.getItemMeta().getDisplayName());
+                    Item item1 = loc.getWorld().dropItem(loc, item);
+
+
+
+
+
+                    String foundValue = DefenseNerf.getItemID(item);
+                    if (foundValue == null) continue;
+                    String idLowerCase = foundValue.toLowerCase();
+                    String[] idToWords = idLowerCase.split("_");
+                    String finalID = "";
+                    for (String str : idToWords) {
+                        String chara = str.substring(0, 1);
+                        chara = chara.toUpperCase();
+                        finalID = finalID +" "+(chara + "" + str.substring(1));
+                    }
+
+                    String rarity = DefenseNerf.getItemRarity(item);
+
+                    if (rarity == null) continue;
+                    String rarityColor = rarity.equalsIgnoreCase("COMMON") ? ChatColor.WHITE+"" : rarity.equalsIgnoreCase("UNCOMMON") ? ChatColor.GREEN+"" :
+                            rarity.equalsIgnoreCase("RARE") ? ChatColor.BLUE+"" : rarity.equalsIgnoreCase("EPIC") ? ChatColor.DARK_PURPLE+"" : rarity.equalsIgnoreCase("LEGENDARY") ? ChatColor.GOLD+"" :
+                                    rarity.equalsIgnoreCase("SPECIAL") ? ChatColor.LIGHT_PURPLE+"" : ChatColor.GRAY+"";
+
+                    item1.setCustomName(ChatColor.GOLD+""+ChatColor.MAGIC+"I"+ChatColor.RESET+" "+rarityColor+item1.getItemStack().getAmount()+"x"+finalID+ChatColor.GOLD+""+ChatColor.MAGIC+"I");
+
+                    item1.setCustomNameVisible(true);
+                    for (Player p : Bukkit.getOnlinePlayers()) {
+                        if (!(p.equals(entry.getKey()))) {
+                            ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
+                                @Override
+                                public void run() {
+                                    PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(item1.getEntityId());
+
+
+                                    ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
+                                    entry.getKey().sendMessage("Session 1 - "+p.getName());
+                                }
+                            }, 1);
+
+                        }
+                    }
+
+                    reservedItems.add(item1);
+                }
+                DefenseNerf.playerSpecificPickup.put(entry.getKey(), reservedItems);
+
+            }
+            Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), ("execute positioned "+loc.getBlockX()+" "+loc.getBlockY()+" "+loc.getBlockZ()+" run spreadplayers "+loc.getBlockX()+" "+loc.getBlockZ()+" "+1+" "+4+" "+false+" @e[type=item,distance=..2]"));
 
         }
 

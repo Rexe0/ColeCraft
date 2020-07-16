@@ -3,8 +3,8 @@ package com.Rexe0.Items.Materials;
 
 import org.bukkit.Material;
 
-public class Coal extends CustomMaterial {
-    public Coal() {
-        super(Material.COAL, 1, "Coal", "COMMON", "COAL", 2);
+public class NetheriteScrap extends CustomMaterial {
+    public NetheriteScrap() {
+        super(Material.NETHERITE_SCRAP, 1, "Netherite Scrap", "RARE", "NETHERITE_SCRAP", 10);
     }
 }

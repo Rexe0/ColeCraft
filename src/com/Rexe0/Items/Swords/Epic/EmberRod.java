@@ -31,6 +31,7 @@ public class EmberRod extends CustomItem {
 
                 player.playSound(player.getLocation(), Sound.ENTITY_BLAZE_SHOOT, 2, 1);
                 LargeFireball fireball = player.getWorld().spawn(loc, LargeFireball.class);
+                fireball.setShooter(player);
 
                 fireball.setDirection(player.getLocation().getDirection());
 
@@ -46,6 +47,7 @@ public class EmberRod extends CustomItem {
                     public void run() {
                         player.playSound(player.getLocation(), Sound.ENTITY_BLAZE_SHOOT, 2, 1);
                         LargeFireball fireball = player.getWorld().spawn(loc, LargeFireball.class);
+                        fireball.setShooter(player);
 
                         fireball.setDirection(player.getLocation().getDirection());
 
@@ -54,6 +56,7 @@ public class EmberRod extends CustomItem {
                             public void run() {
                                 player.playSound(player.getLocation(), Sound.ENTITY_BLAZE_SHOOT, 2, 1);
                                 LargeFireball fireball = player.getWorld().spawn(loc, LargeFireball.class);
+                                fireball.setShooter(player);
 
                                 fireball.setDirection(player.getLocation().getDirection());
                             }

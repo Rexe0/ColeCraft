@@ -1,6 +1,7 @@
 package com.Rexe0.Mobs;
 
 import com.Rexe0.ColeCrafterSlayers;
+import com.Rexe0.Items.CustomItem;
 import com.Rexe0.Items.Swords.Common.GoldenSword;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
@@ -99,12 +100,13 @@ public class CustomMob {
                 pigman.setCustomNameVisible(true);
                 pigman.setCustomName(ChatColor.DARK_GRAY+"["+ChatColor.GRAY+"Lv10"+ChatColor.DARK_GRAY+"] "+ChatColor.RED+"Pigman");
 
+                pigman.getEquipment().setItemInMainHand(CustomItem.getItemClass("FLAMING_SWORD"));
+                pigman.getEquipment().setItemInMainHandDropChance(0);
+
                 pigman.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(25);
                 pigman.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(5);
                 pigman.setHealth(25);
 
-                pigman.getEquipment().setItemInMainHand(new GoldenSword());
-                pigman.getEquipment().setItemInMainHandDropChance(0);
 
                 return pigman;
             case "SLIME":
@@ -142,10 +144,17 @@ public class CustomMob {
                 Zombie miner_zombie = loc.getWorld().spawn(loc, Zombie.class);
                 miner_zombie.setBaby(false);
 
-
-                miner_zombie.getEquipment().setHelmet(new ItemStack(Material.DIAMOND_HELMET, 1));
-                item = new ItemStack(Material.DIAMOND_CHESTPLATE, 1);
+                item = new ItemStack(Material.DIAMOND_HELMET, 1);
                 ItemMeta meta1 = item.getItemMeta();
+                meta1.setUnbreakable(true);
+                meta1.addAttributeModifier(Attribute.GENERIC_ARMOR, new AttributeModifier(UUID.randomUUID(), "defense", 0, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST));
+
+
+                miner_zombie.getEquipment().setHelmet(item);
+
+
+                item = new ItemStack(Material.DIAMOND_CHESTPLATE, 1);
+                meta1 = item.getItemMeta();
                 meta1.setUnbreakable(true);
                 meta1.addAttributeModifier(Attribute.GENERIC_ARMOR, new AttributeModifier(UUID.randomUUID(), "defense", 0, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST));
 
@@ -206,7 +215,15 @@ public class CustomMob {
                 Skeleton miner_skele = loc.getWorld().spawn(loc, Skeleton.class);
 
 
-                miner_skele.getEquipment().setHelmet(new ItemStack(Material.DIAMOND_HELMET, 1));
+                item = new ItemStack(Material.DIAMOND_HELMET, 1);
+                meta1 = item.getItemMeta();
+                meta1.setUnbreakable(true);
+                meta1.addAttributeModifier(Attribute.GENERIC_ARMOR, new AttributeModifier(UUID.randomUUID(), "defense", 0, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST));
+
+
+                miner_skele.getEquipment().setHelmet(item);
+
+
                 item = new ItemStack(Material.DIAMOND_CHESTPLATE, 1);
                 meta1 = item.getItemMeta();
                 meta1.setUnbreakable(true);
@@ -258,7 +275,7 @@ public class CustomMob {
                 miner_skele.setCustomName(ChatColor.DARK_GRAY+"["+ChatColor.GRAY+"Lv15"+ChatColor.DARK_GRAY+"] "+ChatColor.AQUA+"Skeleton");
 
                 miner_skele.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(25);
-                miner_skele.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(13);
+                miner_skele.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(10);
                 miner_skele.setHealth(25);
 
 
@@ -279,6 +296,9 @@ public class CustomMob {
 
                 magmaCubeBoss.getPersistentDataContainer().set(ItemIDKey, PersistentDataType.STRING, "MAGMA_CUBE_BOSS");
 
+                ItemIDKey = new NamespacedKey(ColeCrafterSlayers.getInstance(), "mobType");
+
+                magmaCubeBoss.getPersistentDataContainer().set(ItemIDKey, PersistentDataType.STRING, "CREATURE");
 
                 ItemIDKey1 = new NamespacedKey(ColeCrafterSlayers.getInstance(), "mobLevel");
 
@@ -377,6 +397,7 @@ public class CustomMob {
                 miner_zombie.setCustomName(ChatColor.DARK_GRAY+"["+ChatColor.GRAY+"Lv20"+ChatColor.DARK_GRAY+"] "+ChatColor.AQUA+"Zombie");
 
                 miner_zombie.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(30);
+                miner_zombie.getAttribute(Attribute.GENERIC_ARMOR).setBaseValue(5);
                 miner_zombie.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(15);
                 miner_zombie.setHealth(30);
 
@@ -456,7 +477,8 @@ public class CustomMob {
                 miner_skele.setCustomName(ChatColor.DARK_GRAY+"["+ChatColor.GRAY+"Lv20"+ChatColor.DARK_GRAY+"] "+ChatColor.AQUA+"Skeleton");
 
                 miner_skele.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(30);
-                miner_skele.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(15);
+                miner_skele.getAttribute(Attribute.GENERIC_ARMOR).setBaseValue(5);
+                miner_skele.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(13);
                 miner_skele.setHealth(30);
 
 
@@ -650,11 +672,148 @@ public class CustomMob {
                 silverfish.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(1);
 
                 silverfish.setHealth(5);
-                silverfish.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK).setBaseValue(0.1);
+                silverfish.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK).setBaseValue(0.25);
 
 
 
                 return silverfish;
+            case "BLAZE":
+                Blaze blaze = loc.getWorld().spawn(loc, Blaze.class);
+
+
+
+
+                ItemIDKey = new NamespacedKey(ColeCrafterSlayers.getInstance(), "mobID");
+
+                blaze.getPersistentDataContainer().set(ItemIDKey, PersistentDataType.STRING, "BLAZE");
+
+
+                ItemIDKey1 = new NamespacedKey(ColeCrafterSlayers.getInstance(), "mobLevel");
+
+                blaze.getPersistentDataContainer().set(ItemIDKey1, PersistentDataType.INTEGER, 25);
+
+                blaze.setCustomNameVisible(true);
+                blaze.setCustomName(ChatColor.DARK_GRAY+"["+ChatColor.GRAY+"Lv25"+ChatColor.DARK_GRAY+"] "+ChatColor.GOLD+"Blaze");
+
+                blaze.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(40);
+                blaze.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(20);
+                blaze.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS).setBaseValue(0.1);
+                blaze.setHealth(40);
+
+
+                return blaze;
+            case "MAGMA_CUBE":
+                MagmaCube magmaCube = loc.getWorld().spawn(loc, MagmaCube.class);
+
+                rand = new Random();
+                n = rand.nextInt(3);
+
+                magmaCube.setSize(n+5);
+
+
+
+
+                ItemIDKey = new NamespacedKey(ColeCrafterSlayers.getInstance(), "mobID");
+
+                magmaCube.getPersistentDataContainer().set(ItemIDKey, PersistentDataType.STRING, "MAGMA_CUBE");
+
+
+                ItemIDKey1 = new NamespacedKey(ColeCrafterSlayers.getInstance(), "mobLevel");
+
+                int determineLevel = n == 0 ? 10 : n == 1 ? 20 : n == 2 ? 30 : 1;
+                magmaCube.getPersistentDataContainer().set(ItemIDKey1, PersistentDataType.INTEGER, determineLevel);
+
+                magmaCube.setCustomNameVisible(true);
+                magmaCube.setCustomName(ChatColor.DARK_GRAY+"["+ChatColor.GRAY+"Lv"+determineLevel +ChatColor.DARK_GRAY+"] "+ChatColor.GOLD+"Magma Cube");
+
+                magmaCube.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue((n == 0 ? 16 : n == 1 ? 30 : n == 2 ? 50 : 1));
+                magmaCube.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue((n == 0 ? 10 : n == 1 ? 14 : n == 2 ? 20 : 1));
+                magmaCube.setHealth((n == 0 ? 16 : n == 1 ? 30 : n == 2 ? 50 : 1));
+
+
+
+
+                return magmaCube;
+            case "WITHERED_BONES":
+                WitherSkeleton witherSkele = loc.getWorld().spawn(loc, WitherSkeleton.class);
+
+
+
+
+                ItemIDKey = new NamespacedKey(ColeCrafterSlayers.getInstance(), "mobID");
+
+                witherSkele.getPersistentDataContainer().set(ItemIDKey, PersistentDataType.STRING, "WITHERED_BONES");
+
+
+                ItemIDKey1 = new NamespacedKey(ColeCrafterSlayers.getInstance(), "mobLevel");
+
+                witherSkele.getPersistentDataContainer().set(ItemIDKey1, PersistentDataType.INTEGER, 20);
+
+                witherSkele.setCustomNameVisible(true);
+                witherSkele.setCustomName(ChatColor.DARK_GRAY+"["+ChatColor.GRAY+"Lv20"+ChatColor.DARK_GRAY+"] "+ChatColor.DARK_GRAY+"Withered Bones");
+
+                witherSkele.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(25);
+                witherSkele.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(30);
+                witherSkele.setHealth(25);
+
+
+                return witherSkele;
+            case "WITHERED_ARMOR":
+                witherSkele = loc.getWorld().spawn(loc, WitherSkeleton.class);
+
+
+
+
+                ItemIDKey = new NamespacedKey(ColeCrafterSlayers.getInstance(), "mobID");
+
+                witherSkele.getPersistentDataContainer().set(ItemIDKey, PersistentDataType.STRING, "WITHERED_ARMOR");
+
+
+                ItemIDKey1 = new NamespacedKey(ColeCrafterSlayers.getInstance(), "mobLevel");
+
+                witherSkele.getPersistentDataContainer().set(ItemIDKey1, PersistentDataType.INTEGER, 20);
+
+                witherSkele.setCustomNameVisible(true);
+                witherSkele.setCustomName(ChatColor.DARK_GRAY+"["+ChatColor.GRAY+"Lv32"+ChatColor.DARK_GRAY+"] "+ChatColor.DARK_GRAY+"Withered Armor");
+
+                witherSkele.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(50);
+                witherSkele.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS).setBaseValue(0.9);
+                witherSkele.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(10);
+                witherSkele.setHealth(50);
+
+
+
+                item = new ItemStack(Material.NETHERITE_CHESTPLATE, 1);
+                meta1 = item.getItemMeta();
+                meta1.setUnbreakable(true);
+                meta1.addAttributeModifier(Attribute.GENERIC_ARMOR, new AttributeModifier(UUID.randomUUID(), "defense", 0, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST));
+
+
+                item.setItemMeta(meta1);
+
+                witherSkele.getEquipment().setChestplate(item);
+
+
+
+
+                item = new ItemStack(Material.NETHERITE_BOOTS, 1);
+                meta1 = item.getItemMeta();
+                meta1.setUnbreakable(true);
+                meta1.addAttributeModifier(Attribute.GENERIC_ARMOR, new AttributeModifier(UUID.randomUUID(), "defense", 0, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.FEET));
+
+                item.setItemMeta(meta1);
+
+                witherSkele.getEquipment().setChestplateDropChance(0);
+
+                witherSkele.getEquipment().setBootsDropChance(0);
+
+
+
+
+                witherSkele.getEquipment().setBoots(item);
+
+
+                return witherSkele;
         }
     }
 }

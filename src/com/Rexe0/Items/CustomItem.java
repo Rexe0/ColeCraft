@@ -139,6 +139,10 @@ public class CustomItem extends ItemStack {
 
         meta.getPersistentDataContainer().set(ItemIDKey, PersistentDataType.STRING, itemID);
 
+        NamespacedKey rarityKey = new NamespacedKey(ColeCrafterSlayers.getInstance(), "rarity");
+
+        meta.getPersistentDataContainer().set(rarityKey, PersistentDataType.STRING, rarity);
+
         NamespacedKey ItemDamageKey = new NamespacedKey(ColeCrafterSlayers.getInstance(), "itemDamage");
 
         meta.getPersistentDataContainer().set(ItemDamageKey, PersistentDataType.FLOAT, baseDamage);
@@ -630,7 +634,7 @@ public class CustomItem extends ItemStack {
 //    String[] idToWords = idLowerCase.split("_");
 //    String idToClass = "com.Rexe0.";
 //    for (String str : idToWords) {
-//        String chara = str.substring(0, 0);
+//        String chara = str.substring(0, 1);
 //        chara = chara.toUpperCase();
 //        idToClass = idToClass+(chara+""+str.substring(1));
 //    }
@@ -1595,7 +1599,12 @@ public class CustomItem extends ItemStack {
         cleaver.setIngredient('&', CustomItem.getItemClass("FARM_SUIT_BOOTS"), 1);
         CustomRecipe.customRecipes.add(cleaver);
 
-
+        cleaver = new CustomRecipe(new MoltenCore(), 1, false);
+        cleaver.addPatterns("%$%", "%&%", " % ");
+        cleaver.setIngredient('%', CustomMaterial.getItemClass("MAGMA_CREAM"), 8);
+        cleaver.setIngredient('$', CustomMaterial.getItemClass("ENCHANTED_BLAZE_POWDER"), 1);
+        cleaver.setIngredient('&', CustomMaterial.getItemClass("ENCHANTED_MAGMA_CREAM"), 2);
+        CustomRecipe.customRecipes.add(cleaver);
 
 
 

@@ -60,7 +60,18 @@ public class CustomAnvil implements Listener, CommandExecutor {
                             if (player.getLevel() >= ColeCrafterSlayers.anvilXpCost.get(player)) {
                                 anvilCombined.put(player, true);
                                 e.getInventory().setItem(29, new ItemStack(Material.AIR));
-                                e.getInventory().setItem(33, new ItemStack(Material.AIR));
+
+
+                                ItemStack itemInSlot33 = e.getInventory().getItem(33);
+                                int amount = itemInSlot33.getAmount();
+
+                                if (amount > 1) {
+
+                                    itemInSlot33.setAmount(amount - 1);
+                                    e.getInventory().setItem(33, itemInSlot33);
+                                } else {
+                                    e.getInventory().setItem(33, new ItemStack(Material.AIR));
+                                }
                                 player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE, 2, 1);
                                 player.setLevel(player.getLevel()-ColeCrafterSlayers.anvilXpCost.get(player));
                             }

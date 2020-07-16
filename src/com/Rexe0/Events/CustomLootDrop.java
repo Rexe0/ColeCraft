@@ -26,16 +26,20 @@ public class CustomLootDrop extends Event implements Cancellable {
     private boolean isCancelled;
     private int firstChance;
     private int secondChance;
+    private int lowestAmount;
+    private int highestAmount;
     private ItemStack item;
     private String name;
     private Rarity rarity;
     private static final HandlerList handlers = new HandlerList();
 
-    public CustomLootDrop(Player player, int firstChance, int secondChance, ItemStack item, String name, Rarity rarity, Entity entity) {
+    public CustomLootDrop(Player player, int firstChance, int secondChance, ItemStack item, String name, Rarity rarity, Entity entity, int lowestAmount, int highestAmount) {
         this.player = player;
         this.isCancelled = false;
         this.firstChance = firstChance;
         this.secondChance = secondChance;
+        this.lowestAmount = lowestAmount;
+        this.highestAmount = highestAmount;
         this.item = item;
         this.name = name;
         this.rarity = rarity;
@@ -96,99 +100,131 @@ public class CustomLootDrop extends Event implements Cancellable {
         Random RNG = new Random();
 
         int number = 0;
+        if (rarity == Rarity.GUARANTEED) {
 
-        number = RNG.nextInt(this.secondChance)*100;
-        number += 100;
+            number = RNG.nextInt((this.highestAmount - this.lowestAmount)+1);
 
-        float magicFind = (float) this.player.getAttribute(Attribute.GENERIC_LUCK).getValue();
+            number += +this.lowestAmount;
 
-        if (number <= (this.firstChance*100)*(1+(magicFind/100))) {
-            if (magicFind <= 0) {
-                if (this.rarity == Rarity.COMMON) {
-                    this.player.sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "UNCOMMON DROP! " + ChatColor.RESET + "" + ChatColor.GRAY + "(" + this.name + ChatColor.GRAY + ")");
+            if (number > 0) {
+
+                ItemStack item = this.item;
+                item.setAmount(number);
+
+                Item itemDrop = this.entity.getWorld().dropItem(this.entity.getLocation(), item);
+                ArrayList<Item> itemReserved;
+                itemReserved = DefenseNerf.playerSpecificPickup.get(this.player);
+                if (itemReserved == null) {
+                    itemReserved = new ArrayList<>();
+
+
                 }
-                if (this.rarity == Rarity.UNCOMMON) {
-                    this.player.sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + "RARE DROP! " + ChatColor.RESET + "" + ChatColor.GRAY + "(" + this.name + ChatColor.GRAY + ")");
-                }
-                if (this.rarity == Rarity.RARE) {
-                    this.player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "RARE DROP! " + ChatColor.RESET + "" + ChatColor.GRAY + "(" + this.name + ChatColor.GRAY + ")");
-                }
-                if (this.rarity == Rarity.VERY_RARE) {
-                    this.player.sendMessage(ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "VERY RARE DROP! " + ChatColor.RESET + "" + ChatColor.GRAY + "(" + this.name + ChatColor.GRAY + ")");
-                }
-
-                if (this.rarity == Rarity.CRAZY_RARE) {
-                    this.player.sendMessage(ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "CRAZY RARE DROP! " + ChatColor.RESET + "" + ChatColor.GRAY + "(" + this.name + ChatColor.GRAY + ")");
-                }
-                if (this.rarity == Rarity.INSANELY_RARE) {
-                    this.player.sendMessage(convertToRainbow("INSANELY RARE DROP! ", true) + ChatColor.RESET + "" + ChatColor.GRAY + "(" + this.name + ChatColor.GRAY + ")");
-                }
-            } else {
-
-
-
-
-
-
-
-
-                if (this.rarity == Rarity.COMMON) {
-                    this.player.sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "UNCOMMON DROP! " + ChatColor.RESET + "" + ChatColor.GRAY + "(" + this.name + ChatColor.GRAY + ")"+ChatColor.AQUA+" (+"+magicFind+"% Magic Find)");
-                }
-                if (this.rarity == Rarity.UNCOMMON) {
-                    this.player.sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + "RARE DROP! " + ChatColor.RESET + "" + ChatColor.GRAY + "(" + this.name + ChatColor.GRAY + ")"+ChatColor.AQUA+" (+"+magicFind+"% Magic Find)");
-                }
-                if (this.rarity == Rarity.RARE) {
-                    this.player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "RARE DROP! " + ChatColor.RESET + "" + ChatColor.GRAY + "(" + this.name + ChatColor.GRAY + ")"+ChatColor.AQUA+" (+"+magicFind+"% Magic Find)");
-                }
-                if (this.rarity == Rarity.VERY_RARE) {
-                    this.player.sendMessage(ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "VERY RARE DROP! " + ChatColor.RESET + "" + ChatColor.GRAY + "(" + this.name + ChatColor.GRAY + ")"+ChatColor.AQUA+" (+"+magicFind+"% Magic Find)");
-                }
-
-                if (this.rarity == Rarity.CRAZY_RARE) {
-                    this.player.sendMessage(ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "CRAZY RARE DROP! " + ChatColor.RESET + "" + ChatColor.GRAY + "(" + this.name + ChatColor.GRAY + ")"+ChatColor.AQUA+" (+"+magicFind+"% Magic Find)");
-                }
-                if (this.rarity == Rarity.INSANELY_RARE) {
-                    this.player.sendMessage(convertToRainbow("INSANELY RARE DROP! ", true) + ChatColor.RESET + "" + ChatColor.GRAY + "(" + this.name + ChatColor.GRAY + ")"+ChatColor.AQUA+" (+"+magicFind+"% Magic Find)");
-                }
+                itemReserved.add(itemDrop);
+                DefenseNerf.playerSpecificPickup.put(this.player, itemReserved);
             }
 
-            Item itemDrop = this.entity.getWorld().dropItem(this.entity.getLocation(), this.item);
-            ArrayList<Item> itemReserved;
-            itemReserved = DefenseNerf.playerSpecificPickup.get(this.player);
-            if (itemReserved == null) {
-                itemReserved = new ArrayList<>();
 
-            itemReserved.add(itemDrop);
-        }
-            DefenseNerf.playerSpecificPickup.put(this.player, itemReserved);
 
-            Player player1 = this.player;
+        } else {
 
-            ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
-                @Override
-                public void run() {
-                    player1.playSound(player1.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 2, 1.2f);
-                    ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
-                        @Override
-                        public void run() {
-                            player1.playSound(player1.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 2, 1.5f);
-                            ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
-                                @Override
-                                public void run() {
-                                    player1.playSound(player1.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 2, 1.8f);
-                                }
-                            }, 5);
-                        }
-                    }, 5);
+
+            number = RNG.nextInt(this.secondChance) * 100;
+            number += 100;
+
+            float magicFind = (float) this.player.getAttribute(Attribute.GENERIC_LUCK).getValue();
+
+            if (number <= (this.firstChance * 100) * (1 + (magicFind / 100))) {
+                if (magicFind <= 0) {
+                    if (this.rarity == Rarity.COMMON) {
+                        this.player.sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "UNCOMMON DROP! " + ChatColor.RESET + "" + ChatColor.GRAY + "(" + this.name + ChatColor.GRAY + ")");
+                    }
+                    if (this.rarity == Rarity.UNCOMMON) {
+                        this.player.sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + "RARE DROP! " + ChatColor.RESET + "" + ChatColor.GRAY + "(" + this.name + ChatColor.GRAY + ")");
+                    }
+                    if (this.rarity == Rarity.RARE) {
+                        this.player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "RARE DROP! " + ChatColor.RESET + "" + ChatColor.GRAY + "(" + this.name + ChatColor.GRAY + ")");
+                    }
+                    if (this.rarity == Rarity.VERY_RARE) {
+                        this.player.sendMessage(ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "VERY RARE DROP! " + ChatColor.RESET + "" + ChatColor.GRAY + "(" + this.name + ChatColor.GRAY + ")");
+                    }
+
+                    if (this.rarity == Rarity.CRAZY_RARE) {
+                        this.player.sendMessage(ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "CRAZY RARE DROP! " + ChatColor.RESET + "" + ChatColor.GRAY + "(" + this.name + ChatColor.GRAY + ")");
+                    }
+                    if (this.rarity == Rarity.INSANELY_RARE) {
+                        this.player.sendMessage(convertToRainbow("INSANELY RARE DROP! ", true) + ChatColor.RESET + "" + ChatColor.GRAY + "(" + this.name + ChatColor.GRAY + ")");
+                    }
+                } else {
+
+
+                    if (this.rarity == Rarity.COMMON) {
+                        this.player.sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "UNCOMMON DROP! " + ChatColor.RESET + "" + ChatColor.GRAY + "(" + this.name + ChatColor.GRAY + ")" + ChatColor.AQUA + " (+" + magicFind + "% Magic Find)");
+                    }
+                    if (this.rarity == Rarity.UNCOMMON) {
+                        this.player.sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + "RARE DROP! " + ChatColor.RESET + "" + ChatColor.GRAY + "(" + this.name + ChatColor.GRAY + ")" + ChatColor.AQUA + " (+" + magicFind + "% Magic Find)");
+                    }
+                    if (this.rarity == Rarity.RARE) {
+                        this.player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "RARE DROP! " + ChatColor.RESET + "" + ChatColor.GRAY + "(" + this.name + ChatColor.GRAY + ")" + ChatColor.AQUA + " (+" + magicFind + "% Magic Find)");
+                    }
+                    if (this.rarity == Rarity.VERY_RARE) {
+                        this.player.sendMessage(ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "VERY RARE DROP! " + ChatColor.RESET + "" + ChatColor.GRAY + "(" + this.name + ChatColor.GRAY + ")" + ChatColor.AQUA + " (+" + magicFind + "% Magic Find)");
+                    }
+
+                    if (this.rarity == Rarity.CRAZY_RARE) {
+                        this.player.sendMessage(ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "CRAZY RARE DROP! " + ChatColor.RESET + "" + ChatColor.GRAY + "(" + this.name + ChatColor.GRAY + ")" + ChatColor.AQUA + " (+" + magicFind + "% Magic Find)");
+                    }
+                    if (this.rarity == Rarity.INSANELY_RARE) {
+                        this.player.sendMessage(convertToRainbow("INSANELY RARE DROP! ", true) + ChatColor.RESET + "" + ChatColor.GRAY + "(" + this.name + ChatColor.GRAY + ")" + ChatColor.AQUA + " (+" + magicFind + "% Magic Find)");
+                    }
                 }
-            }, 1);
+
+
+
+
+                number = RNG.nextInt((this.highestAmount - this.lowestAmount)+1);
+
+                number += +this.lowestAmount;
+
+                ItemStack item = this.item;
+                item.setAmount(number);
+
+                Item itemDrop = this.entity.getWorld().dropItem(this.entity.getLocation(), item);
+                ArrayList<Item> itemReserved;
+                itemReserved = DefenseNerf.playerSpecificPickup.get(this.player);
+                if (itemReserved == null) {
+                    itemReserved = new ArrayList<>();
+
+
+                }
+                itemReserved.add(itemDrop);
+                DefenseNerf.playerSpecificPickup.put(this.player, itemReserved);
+
+                Player player1 = this.player;
+
+                ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
+                    @Override
+                    public void run() {
+                        player1.playSound(player1.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 2, 1.2f);
+                        ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
+                            @Override
+                            public void run() {
+                                player1.playSound(player1.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 2, 1.5f);
+                                ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        player1.playSound(player1.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 2, 1.8f);
+                                    }
+                                }, 5);
+                            }
+                        }, 5);
+                    }
+                }, 1);
+
+
+            }
 
 
         }
-
-
-
     }
 
 
@@ -225,7 +261,8 @@ public class CustomLootDrop extends Event implements Cancellable {
 
 
     public enum Rarity {
-        COMMON, // Light Green, Boss: Default chance usually 25 to 50%
+        GUARANTEED, // White (No Message), Boss: Default chance usually 50 to 100%, Regular Mobs: Default chance usually 25 to 100%
+        COMMON, // Light Green, Boss: Default chance usually 25 to 50%, Regular Mobs: Default chance usually 10 to 25%
         UNCOMMON, // Light blue, Boss: Default chance usually 10 to 25%,     Regular Mobs: Default chance usually 5 to 10%
         RARE, // Gold, Boss: Default chance usually 5 to 10%,     Regular Mobs: Default chance usually 0.5 to 5%
         VERY_RARE, // Dark Purple, Boss: Default chance usually 1 to 5%,     Regular Mobs: Default chance usually < 0.5%

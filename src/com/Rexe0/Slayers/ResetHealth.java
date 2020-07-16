@@ -4,6 +4,7 @@ import com.Rexe0.ColeCrafterSlayers;
 import com.Rexe0.Items.Materials.CustomMaterial;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.WorldBorder;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.command.Command;
@@ -60,17 +61,25 @@ public class ResetHealth implements CommandExecutor {
 
 
 
-                    ScoreboardManager manager = Bukkit.getScoreboardManager();
-                    Scoreboard scoreboard = manager.getMainScoreboard();
+                    // Gets instance of world border
+                    WorldBorder border = player.getLocation().getWorld().getWorldBorder();
 
-                    scoreboard.getObjective("foragingLevel").getScore(player.getName()).setScore(0);
-                    scoreboard.getObjective("foragingXP").getScore(player.getName()).setScore(0);
-                    scoreboard.getObjective("combatLevel").getScore(player.getName()).setScore(0);
-                    scoreboard.getObjective("combatXP").getScore(player.getName()).setScore(0);
-                    scoreboard.getObjective("farmingLevel").getScore(player.getName()).setScore(0);
-                    scoreboard.getObjective("farmingXP").getScore(player.getName()).setScore(0);
-                    scoreboard.getObjective("miningLevel").getScore(player.getName()).setScore(0);
-                    scoreboard.getObjective("miningXP").getScore(player.getName()).setScore(0);
+                    // Sets the center.
+                    border.setCenter(player.getLocation());
+
+                    // Sets the radius
+                    border.setSize(100);
+
+
+                    ColeCrafterSlayers.setSkillLevel(player, "foraging",0);
+                    ColeCrafterSlayers.setSkillLevel(player, "combat",0);
+                    ColeCrafterSlayers.setSkillLevel(player, "mining",0);
+                    ColeCrafterSlayers.setSkillLevel(player, "farming",0);
+                    ColeCrafterSlayers.setSkillXP(player, "foraging",0);
+                    ColeCrafterSlayers.setSkillXP(player, "combat",0);
+                    ColeCrafterSlayers.setSkillXP(player, "mining",0);
+                    ColeCrafterSlayers.setSkillXP(player, "farming",0);
+
 
                     ColeCrafterSlayers.setCoins(player, 0);
                     ColeCrafterSlayers.setBank(player, 0);

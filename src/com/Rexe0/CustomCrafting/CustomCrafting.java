@@ -910,13 +910,39 @@ public class CustomCrafting implements Listener, CommandExecutor {
                     }, 1);
                     ColeCrafterSlayers.consumeCraft(player, e.getInventory(), ColeCrafterSlayers.craftingAmounts.get(player), true, ColeCrafterSlayers.craftingResult.get(player));
                 } else {
-                    ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
-                        @Override
-                        public void run() {
-                            e.getInventory().setItem(24, new ItemStack(Material.BARRIER));
+                    boolean cancel = false;
+                    if (e.getCursor() != null) {
+
+                        if (ColeCrafterSlayers.isEqual(e.getCursor(), e.getCurrentItem())) {
+                            ItemStack item = e.getCursor();
+                            if (item.getAmount() + e.getCurrentItem().getAmount() <= 64) {
+                                e.setCancelled(true);
+                                item.setAmount(item.getAmount() + e.getCurrentItem().getAmount());
+                                ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
+                                    @Override
+                                    public void run() {
+
+                                        player.setItemOnCursor(item);
+                                    }
+                                }, 1);
+
+                            } else {
+                                cancel = true;
+                                e.setCancelled(true);
+                            }
                         }
-                    }, 1);
-                    ColeCrafterSlayers.consumeCraft(player, e.getInventory(), ColeCrafterSlayers.craftingAmounts.get(player), false, ColeCrafterSlayers.craftingResult.get(player));
+                    }
+
+                    if (!cancel) {
+
+                        ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
+                            @Override
+                            public void run() {
+                                e.getInventory().setItem(24, new ItemStack(Material.BARRIER));
+                            }
+                        }, 1);
+                        ColeCrafterSlayers.consumeCraft(player, e.getInventory(), ColeCrafterSlayers.craftingAmounts.get(player), false, ColeCrafterSlayers.craftingResult.get(player));
+                    }
                 }
             }
 

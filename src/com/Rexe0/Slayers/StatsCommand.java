@@ -351,6 +351,11 @@ public class StatsCommand implements CommandExecutor {
 
                         String hp = numberFormat.format(health);
 
+                        double ehp = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()*(health/20+1);
+                        ehp = (float) (Math.floor(ehp*10f))/10f;
+
+                        String formattedEHP = numberFormat.format(ehp);
+
                         float damageReduction = health/(health+20f);
                         damageReduction = (float) (Math.floor(damageReduction*1000f))/10f;
 
@@ -375,7 +380,7 @@ public class StatsCommand implements CommandExecutor {
                         lore.add(ChatColor.DARK_GRAY+"  "+ChatColor.ITALIC+"Talismans in your inventory.");
                         lore.add(ChatColor.GRAY+" ");
                         lore.add(ChatColor.GRAY+"Damage Reduction: "+ChatColor.GREEN+DR+"%");
-                        lore.add(ChatColor.GRAY+"Effective Health: "+ChatColor.RED+"");
+                        lore.add(ChatColor.GRAY+"Effective Health: "+ChatColor.RED+""+formattedEHP+"❤");
 
 
 
