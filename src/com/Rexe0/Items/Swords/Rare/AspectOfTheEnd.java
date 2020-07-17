@@ -6,6 +6,7 @@ import com.Rexe0.Items.CustomItem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.util.Vector;
@@ -24,6 +25,7 @@ public class AspectOfTheEnd extends CustomItem {
             if (aoteCD.get(player) < 5) {
 
                 Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), ("execute as @a[name="+player.getName()+"] at @s run tp @s ^ ^ ^8"));
+                player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 2, 1);
 
                 player.setVelocity(new Vector(0, 0, 0));
 

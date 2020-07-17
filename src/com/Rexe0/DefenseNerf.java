@@ -13,6 +13,8 @@ import com.Rexe0.Mobs.CustomMob;
 import com.Rexe0.Slayers.StatsCommand;
 import com.Rexe0.Slayers.sendMessageToSelf;
 import com.Rexe0.Slayers.SlayerMenu;
+import de.slikey.effectlib.Effect;
+import de.slikey.effectlib.effect.ConeEffect;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.*;
 import org.bukkit.Material;
@@ -67,6 +69,7 @@ public class DefenseNerf implements Listener {
     private static HashMap<Player, Float> magmaBossDamage = new HashMap<>();
     public static HashMap<Player, Integer> totalDefense = new HashMap<>();
     private static HashMap<Entity, Integer> thunderlordHits = new HashMap<Entity, Integer>();
+
 
 
     public static Vector rotateYAxis(Vector dir, double angleD) {
@@ -536,8 +539,23 @@ public class DefenseNerf implements Listener {
                 }
 
                 if (foundValue.equals("WITHERED_ARMOR")) {
-                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 1, CustomMaterial.getItemClass("NETHERITE_SCRAP"), ChatColor.BLUE+"Netherite Scrap", CustomLootDrop.Rarity.GUARANTEED, e.getEntity(), 0, 2));
+                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 1, CustomMaterial.getItemClass("NETHERITE_SCRAP"), ChatColor.BLUE+"Netherite Scrap", CustomLootDrop.Rarity.GUARANTEED, e.getEntity(), 1, 1));
 
+                }
+
+                if (foundValue.equals("MAGMA_CUBE")) {
+                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 1, CustomMaterial.getItemClass("MAGMA_CREAM"), ChatColor.WHITE+"Magma Cream", CustomLootDrop.Rarity.GUARANTEED, e.getEntity(), 1, 3));
+
+                }
+
+                if (foundValue.equals("BLAZE")) {
+                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 1, CustomMaterial.getItemClass("BLAZE_ROD"), ChatColor.WHITE+"Blaze Rod", CustomLootDrop.Rarity.GUARANTEED, e.getEntity(), 1, 2));
+
+                }
+
+                if (foundValue.equals("INFERNO")) {
+                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 1, CustomMaterial.getItemClass("BLAZE_ROD"), ChatColor.WHITE+"Blaze Rod", CustomLootDrop.Rarity.GUARANTEED, e.getEntity(), 3, 5));
+                    Bukkit.getServer().getPluginManager().callEvent(new CustomLootDrop(player, 1, 20, CustomMaterial.getItemClass("ENCHANTED_BLAZE_POWDER"), ChatColor.GREEN+"Enchanted Blaze Powder", CustomLootDrop.Rarity.UNCOMMON, e.getEntity(), 1, 1));
                 }
 
                 if (foundValue.equals("MAGMA_CUBE_BOSS")) {
@@ -1256,6 +1274,38 @@ public class DefenseNerf implements Listener {
 
 
 
+                double DamageReductionStat = player.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS).getValue();
+
+                damage = damage * (1 - DamageReductionStat);
+
+
+                String foundValue1 = ColeCrafterSlayers.getMobType(player);
+
+                if (foundValue1 != null) {
+                    if (foundValue1.equals("CREATURE")) {
+                        double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+                        if (damage > maxHealth/20) {
+                            double extraDamage = damage-maxHealth/20;
+                            damage = maxHealth/20+(extraDamage/20);
+                        }
+
+                        if (damage > maxHealth/10) {
+                            damage = maxHealth/10;
+                        }
+                    }
+                    if (foundValue1.equals("BOSS")) {
+                        double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+                        if (damage > maxHealth/50) {
+                            double extraDamage = damage-maxHealth/50;
+                            damage = maxHealth/50+(extraDamage/10);
+                        }
+
+                        if (damage > maxHealth/25) {
+                            damage = maxHealth/25;
+                        }
+                    }
+                }
+
                 e.setDamage(0);
 
 
@@ -1329,37 +1379,7 @@ public class DefenseNerf implements Listener {
 
 
 
-                double DamageReductionStat = player.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS).getValue();
 
-                damage = damage * (1 - DamageReductionStat);
-
-
-                String foundValue1 = ColeCrafterSlayers.getMobType(player);
-
-                if (foundValue1 != null) {
-                    if (foundValue1.equals("CREATURE")) {
-                        double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-                        if (damage > maxHealth/20) {
-                            double extraDamage = damage-maxHealth/20;
-                            damage = maxHealth/20+(extraDamage/20);
-                        }
-
-                        if (damage > maxHealth/10) {
-                            damage = maxHealth/10;
-                        }
-                    }
-                    if (foundValue1.equals("BOSS")) {
-                        double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-                        if (damage > maxHealth/50) {
-                            double extraDamage = damage-maxHealth/50;
-                            damage = maxHealth/50+(extraDamage/10);
-                        }
-
-                        if (damage > maxHealth/25) {
-                            damage = maxHealth/25;
-                        }
-                    }
-                }
 
                 if (player instanceof Player) {
                     if (player.getHealth() - damage <= 0) {
@@ -2236,7 +2256,7 @@ public class DefenseNerf implements Listener {
         }
 
         if (foundValue != null) {
-            if (foundValue.equals("SLIME") || foundValue.equals("MAGMA_CUBE_BOSS")) {
+            if (foundValue.equals("SLIME") || foundValue.equals("MAGMA_CUBE_BOSS") || foundValue.equals("MAGMA_CUBE")) {
                 e.setCancelled(true);
             }
         }

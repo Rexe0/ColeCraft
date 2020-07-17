@@ -7,7 +7,7 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 public class FrozenBlazeHelmet extends CustomItem {
     public FrozenBlazeHelmet() {
-        super(Material.PLAYER_HEAD, 1, "Frozen Blaze Helmet", "LEGENDARY", 8, 2, 22,0,"FROZEN_BLAZE_HELMET", "HELMET", 35600);
+        super(Material.PLAYER_HEAD, 1, "Frozen Blaze Helmet", "LEGENDARY", 8, 2, 22,5,"FROZEN_BLAZE_HELMET", "HELMET", 35600);
 
     }
 }

@@ -10,6 +10,8 @@ import com.Rexe0.Items.Armor.FarmSuit.*;
 import com.Rexe0.Items.Armor.HardenedDiamond.*;
 import com.Rexe0.Items.Armor.Blaze.*;
 import com.Rexe0.Items.Armor.FrozenBlaze.*;
+import com.Rexe0.Items.Armor.Magma.*;
+import com.Rexe0.Items.Armor.Netherite.*;
 import com.Rexe0.Items.Armor.Speedster.*;
 import com.Rexe0.Items.Armor.Lapis.*;
 import com.Rexe0.Items.Armor.Miner.*;
@@ -387,6 +389,12 @@ public class CustomItem extends ItemStack {
                 Lore.add(ChatColor.GRAY+"Shoots an additional "+ChatColor.GREEN+"2"+ChatColor.GRAY+" arrows.");
                 Lore.add(ChatColor.GRAY+"Each arrow has a chance to duplicate.");
                 break;
+            case "FROZEN_SCYTHE":
+                Lore.add(ChatColor.GOLD+"Item Ability: Ice Bolt");
+                Lore.add(ChatColor.GRAY+"Shoots a bolt forwards that deals");
+                Lore.add(ChatColor.RED+"5 Damage "+ChatColor.GRAY+"and briefly freeze");
+                Lore.add(ChatColor.GRAY+"any enemies hit with the projectile.");
+                break;
             case "HURRICANE_BOW":
                 Lore.add(ChatColor.GOLD+"Item Ability: Tempest");
                 Lore.add(ChatColor.GRAY+"Shoots an additional");
@@ -453,6 +461,15 @@ public class CustomItem extends ItemStack {
                 Lore.add(ChatColor.GRAY+"dramatically increases your");
                 Lore.add(ChatColor.GRAY+"defense bonus when inside of a");
                 Lore.add(ChatColor.GRAY+"mine");
+                break;
+            case "MAGMA_HELMET":
+            case "MAGMA_CHESTPLATE":
+            case "MAGMA_LEGGINGS":
+            case "MAGMA_BOOTS":
+                Lore.add(ChatColor.GRAY+"Each piece of this armour");
+                Lore.add(ChatColor.GRAY+"dramatically increases your");
+                Lore.add(ChatColor.GRAY+"health bonus when inside of a");
+                Lore.add(ChatColor.GRAY+"the blazing fortress");
                 break;
             case "FARM_SUIT_HELMET":
             case "FARM_SUIT_CHESTPLATE":
@@ -905,6 +922,24 @@ public class CustomItem extends ItemStack {
                 return new SpeedsterLeggings();
             case "MOLTEN_CORE":
                 return new MoltenCore();
+            case "FROZEN_SCYTHE":
+                return new FrozenScythe();
+            case "NETHERITE_CHESTPLATE":
+                return new NetheriteChestplate();
+            case "NETHERITE_HELMET":
+                return new NetheriteHelmet();
+            case "NETHERITE_BOOTS":
+                return new NetheriteBoots();
+            case "NETHERITE_LEGGINGS":
+                return new NetheriteLeggings();
+            case "MAGMA_CHESTPLATE":
+                return new MagmaChestplate();
+            case "MAGMA_HELMET":
+                return new MagmaHelmet();
+            case "MAGMA_BOOTS":
+                return new MagmaBoots();
+            case "MAGMA_LEGGINGS":
+                return new MagmaLeggings();
             default:
                 return null;
         }
@@ -1394,6 +1429,11 @@ public class CustomItem extends ItemStack {
         cleaver.setIngredient('&', CustomMaterial.getItemClass("ENCHANTED_BAKED_POTATO"), 1);
         CustomRecipe.customRecipes.add(cleaver);
 
+        cleaver = new CustomRecipe(new EnchantedMagmaCream(), 1, false);
+        cleaver.addPatterns(" % ", "%%%", " % ");
+        cleaver.setIngredient('%', CustomMaterial.getItemClass("MAGMA_CREAM"), 4);
+        CustomRecipe.customRecipes.add(cleaver);
+
         cleaver = new CustomRecipe(new HayBale(), 1, false);
         cleaver.addPatterns("%%%", "%%%", "%%%");
         cleaver.setIngredient('%', CustomMaterial.getItemClass("WHEAT"), 1);
@@ -1605,6 +1645,60 @@ public class CustomItem extends ItemStack {
         cleaver.setIngredient('$', CustomMaterial.getItemClass("ENCHANTED_BLAZE_POWDER"), 1);
         cleaver.setIngredient('&', CustomMaterial.getItemClass("ENCHANTED_MAGMA_CREAM"), 2);
         CustomRecipe.customRecipes.add(cleaver);
+
+        cleaver = new CustomRecipe(new FrozenScythe(), 1, false);
+        cleaver.addPatterns("%% ", " & ", " & ");
+        cleaver.setIngredient('%', CustomMaterial.getItemClass("ENCHANTED_PACKED_ICE"), 32);
+        cleaver.setIngredient('&', CustomMaterial.getItemClass("STICK"), 1);
+        CustomRecipe.customRecipes.add(cleaver);
+
+
+        cleaver = new CustomRecipe(new NetheriteHelmet(), 1, false);
+        cleaver.addPatterns("%%%", "% %", "   ");
+        cleaver.setIngredient('%', CustomMaterial.getItemClass("NETHERITE_SCRAP"), 1);
+        CustomRecipe.customRecipes.add(cleaver);
+
+        cleaver = new CustomRecipe(new NetheriteChestplate(), 1, false);
+        cleaver.addPatterns("% %", "%%%", "%%%");
+        cleaver.setIngredient('%', CustomMaterial.getItemClass("NETHERITE_SCRAP"), 1);
+        CustomRecipe.customRecipes.add(cleaver);
+
+        cleaver = new CustomRecipe(new NetheriteLeggings(), 1, false);
+        cleaver.addPatterns("%%%", "% %", "% %");
+        cleaver.setIngredient('%', CustomMaterial.getItemClass("NETHERITE_SCRAP"), 1);
+        CustomRecipe.customRecipes.add(cleaver);
+
+        cleaver = new CustomRecipe(new NetheriteBoots(), 1, false);
+        cleaver.addPatterns("% %", "% %", "   ");
+        cleaver.setIngredient('%', CustomMaterial.getItemClass("NETHERITE_SCRAP"), 1);
+        CustomRecipe.customRecipes.add(cleaver);
+
+
+
+
+        cleaver = new CustomRecipe(new MagmaHelmet(), 1, false);
+        cleaver.addPatterns("%%%", "% %", "   ");
+        cleaver.setIngredient('%', CustomMaterial.getItemClass("ENCHANTED_MAGMA_CREAM"), 12);
+        CustomRecipe.customRecipes.add(cleaver);
+
+        cleaver = new CustomRecipe(new MagmaChestplate(), 1, false);
+        cleaver.addPatterns("% %", "%%%", "%%%");
+        cleaver.setIngredient('%', CustomMaterial.getItemClass("ENCHANTED_MAGMA_CREAM"), 12);
+        CustomRecipe.customRecipes.add(cleaver);
+
+        cleaver = new CustomRecipe(new MagmaLeggings(), 1, false);
+        cleaver.addPatterns("%%%", "% %", "% %");
+        cleaver.setIngredient('%', CustomMaterial.getItemClass("ENCHANTED_MAGMA_CREAM"), 12);
+        CustomRecipe.customRecipes.add(cleaver);
+
+        cleaver = new CustomRecipe(new MagmaBoots(), 1, false);
+        cleaver.addPatterns("% %", "% %", "   ");
+        cleaver.setIngredient('%', CustomMaterial.getItemClass("ENCHANTED_MAGMA_CREAM"), 12);
+        CustomRecipe.customRecipes.add(cleaver);
+
+
+
+
 
 
 

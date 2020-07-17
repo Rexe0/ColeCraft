@@ -9,6 +9,7 @@ import com.Rexe0.Mobs.CustomMob;
 import com.Rexe0.Mobs.CustomMobCommand;
 import com.Rexe0.NPCs.CustomNPC;
 import com.Rexe0.Slayers.*;
+import de.slikey.effectlib.EffectManager;
 import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.*;
 import org.bukkit.Material;
@@ -66,6 +67,7 @@ public class ColeCrafterSlayers extends JavaPlugin {
     public static HashMap<Player, Boolean> displayActionbar = new HashMap<>();
     public static HashMap<Player, Short> anvilXpCost = new HashMap<>();
     public static Location magmaBossLocation;
+    public static EffectManager effectManager;
 
     public static String currentTime = "12:00am";
 
@@ -668,6 +670,8 @@ public class ColeCrafterSlayers extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
+        effectManager = new EffectManager(instance);
+
 
 
         if (!f.exists()) {
@@ -699,18 +703,6 @@ public class ColeCrafterSlayers extends JavaPlugin {
 
         ScoreboardManager manager = Bukkit.getScoreboardManager();
         Scoreboard scoreboard = manager.getMainScoreboard();
-
-        if (scoreboard.getObjective("combatXP") == null) scoreboard.registerNewObjective("combatXP", "dummy", "CombatXP");
-        if (scoreboard.getObjective("level") == null) scoreboard.registerNewObjective("level", "dummy", "CombatLevel");
-
-        if (scoreboard.getObjective("miningXP") == null) scoreboard.registerNewObjective("miningXP", "dummy", "MiningXP");
-        if (scoreboard.getObjective("miningLevel") == null) scoreboard.registerNewObjective("miningLevel", "dummy", "MiningLevel");
-
-        if (scoreboard.getObjective("farmingXP") == null) scoreboard.registerNewObjective("farmingXP", "dummy", "FarmingXP");
-        if (scoreboard.getObjective("farmingLevel") == null) scoreboard.registerNewObjective("farmingLevel", "dummy", "FarmingLevel");
-
-        if (scoreboard.getObjective("foragingXP") == null) scoreboard.registerNewObjective("foragingXP", "dummy", "ForagingXP");
-        if (scoreboard.getObjective("foragingLevel") == null) scoreboard.registerNewObjective("foragingLevel", "dummy", "ForagingLevel");
 
 
 
@@ -811,14 +803,18 @@ public class ColeCrafterSlayers extends JavaPlugin {
                             area = ChatColor.AQUA + "Deep Caverns";
                         } else if ((X > 109 && Y > 0 && Z > -480) && (X < 272 && Y < 150 && Z < -332)) {
                             area = ChatColor.AQUA + "Mushroom Desert";
+                        } else if ((X > -451 && Y > 10 && Z > -337) && (X < -92 && Y < 250 && Z < -166)) {
+                            area = ChatColor.RED + "Spiders Den";
+                        } else if ((X > -547 && Y > 5 && Z > -698) && (X < -195 && Y < 250 && Z < -379)) {
+                            area = ChatColor.RED + "Blazing Fortress";
                         }
 
 
                         Location slime = player.getLocation();
-                        slime.setY(slime.getY()-1);
+                        slime.setY(slime.getY() - 1);
 
                         Location slime1 = player.getLocation();
-                        slime1.setY(slime1.getY()-2);
+                        slime1.setY(slime1.getY() - 2);
 
                         if (Bukkit.getWorld("hub").getBlockAt(slime).getType() == Material.SLIME_BLOCK || Bukkit.getWorld("hub").getBlockAt(slime1).getType() == Material.SLIME_BLOCK) {
                             HashMap<Location, Integer> locations = new HashMap<>();
@@ -831,6 +827,18 @@ public class ColeCrafterSlayers extends JavaPlugin {
                             locations.put(new Location(Bukkit.getWorld("hub"), 142, 92, -311), 6);
                             locations.put(new Location(Bukkit.getWorld("hub"), 150, 76, -359), 7);
 
+                            locations.put(new Location(Bukkit.getWorld("hub"), -163, 73, -162), 8);
+                            locations.put(new Location(Bukkit.getWorld("hub"), -198, 83, -229), 9);
+                            locations.put(new Location(Bukkit.getWorld("hub"), -254, 132, -295), 10);
+                            locations.put(new Location(Bukkit.getWorld("hub"), -310, 83, -377), 11);
+
+                            // Teleport from graveyard to spider den: -163, 73, -162    -201.5, 84, -232.5, 135, 0
+
+                            // From spiderden to graveyard: -198, 83, -229            -160.5, 73, -159.5, -45, 0
+
+                            // From spider to blaze fort -254, 132, -295            -310.0, 83, -380.5, 180, 0
+
+                            // From blaze to spider  -310, 83, -377        -254.0, 132, -290.5, 0, 0
 
                             for (Map.Entry<Location, Integer> requiredToTeleport : locations.entrySet()) {
                                 long distanceSquared = (long) player.getLocation().distanceSquared(requiredToTeleport.getKey());
@@ -862,6 +870,18 @@ public class ColeCrafterSlayers extends JavaPlugin {
                                     if (requiredToTeleport.getValue() == 7) {
                                         teleport = new Location(Bukkit.getWorld("hub"), 142.5, 91, -304.5, 0, 0);
                                     }
+                                    if (requiredToTeleport.getValue() == 8) {
+                                        teleport = new Location(Bukkit.getWorld("hub"), -201.5, 84, -232.5, 135, 0);
+                                    }
+                                    if (requiredToTeleport.getValue() == 9) {
+                                        teleport = new Location(Bukkit.getWorld("hub"), -160.5, 73, -159.5, -45, 0);
+                                    }
+                                    if (requiredToTeleport.getValue() == 10) {
+                                        teleport = new Location(Bukkit.getWorld("hub"), -310.0, 83, -380.5, 180, 0);
+                                    }
+                                    if (requiredToTeleport.getValue() == 11) {
+                                        teleport = new Location(Bukkit.getWorld("hub"), -254.0, 132, -290.5, 0, 0);
+                                    }
 
                                     if (teleport != null) {
                                         player.getWorld().spawnParticle(Particle.PORTAL, player.getLocation(), 100, 0.3f, 0.6f, 0.3f);
@@ -883,7 +903,7 @@ public class ColeCrafterSlayers extends JavaPlugin {
 
 
                             boolean hasAttribute = false;
-                            for (AttributeModifier attribute :  player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getModifiers()) {
+                            for (AttributeModifier attribute : player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getModifiers()) {
                                 if (attribute.getName().equals("lapisArmorSetBonus")) {
                                     hasAttribute = true;
                                 }
@@ -895,7 +915,7 @@ public class ColeCrafterSlayers extends JavaPlugin {
 
 
                         } else {
-                            for (AttributeModifier attribute :  player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getModifiers()) {
+                            for (AttributeModifier attribute : player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getModifiers()) {
                                 if (attribute.getName().equals("lapisArmorSetBonus")) {
                                     player.getAttribute(Attribute.GENERIC_MAX_HEALTH).removeModifier(attribute);
 
@@ -909,7 +929,7 @@ public class ColeCrafterSlayers extends JavaPlugin {
 
 
                             boolean hasAttribute = false;
-                            for (AttributeModifier attribute :  player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getModifiers()) {
+                            for (AttributeModifier attribute : player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getModifiers()) {
                                 if (attribute.getName().equals("speedsterArmorSetBonus")) {
                                     hasAttribute = true;
                                 }
@@ -921,7 +941,7 @@ public class ColeCrafterSlayers extends JavaPlugin {
 
 
                         } else {
-                            for (AttributeModifier attribute :  player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getModifiers()) {
+                            for (AttributeModifier attribute : player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getModifiers()) {
                                 if (attribute.getName().equals("speedsterArmorSetBonus")) {
                                     player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).removeModifier(attribute);
 
@@ -930,12 +950,12 @@ public class ColeCrafterSlayers extends JavaPlugin {
                             }
                         }
 
-                        if (DefenseNerf.isFullSet(player, "FARM_SUIT_HELMET", "FARM_SUIT_CHESTPLATE", "FARM_SUIT_LEGGINGS", "FARM_SUIT_BOOTS") && (currentLocation.get(player).equals(ChatColor.AQUA+"Farm") || currentLocation.get(player).equals(ChatColor.AQUA+"The Barn") || currentLocation.get(player).equals(ChatColor.AQUA+"Mushroom Desert"))) {
+                        if (DefenseNerf.isFullSet(player, "FARM_SUIT_HELMET", "FARM_SUIT_CHESTPLATE", "FARM_SUIT_LEGGINGS", "FARM_SUIT_BOOTS") && (currentLocation.get(player).equals(ChatColor.AQUA + "Farm") || currentLocation.get(player).equals(ChatColor.AQUA + "The Barn") || currentLocation.get(player).equals(ChatColor.AQUA + "Mushroom Desert"))) {
                             UUID uuid = UUID.fromString("34edb9a1-7925-4ec9-8348-d3eced701f16");
 
 
                             boolean hasAttribute = false;
-                            for (AttributeModifier attribute :  player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getModifiers()) {
+                            for (AttributeModifier attribute : player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getModifiers()) {
                                 if (attribute.getName().equals("farmSuitSetBonus")) {
                                     hasAttribute = true;
                                 }
@@ -947,7 +967,7 @@ public class ColeCrafterSlayers extends JavaPlugin {
 
 
                         } else {
-                            for (AttributeModifier attribute :  player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getModifiers()) {
+                            for (AttributeModifier attribute : player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getModifiers()) {
                                 if (attribute.getName().equals("farmSuitSetBonus")) {
                                     player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).removeModifier(attribute);
 
@@ -970,13 +990,12 @@ public class ColeCrafterSlayers extends JavaPlugin {
                         }
 
 
-
-                        if (DefenseNerf.isFullSet(player, "AGRICULTURE_HELMET", "AGRICULTURE_CHESTPLATE", "AGRICULTURE_LEGGINGS", "AGRICULTURE_BOOTS") && (currentLocation.get(player).equals(ChatColor.AQUA+"Farm") || currentLocation.get(player).equals(ChatColor.AQUA+"The Barn") || currentLocation.get(player).equals(ChatColor.AQUA+"Mushroom Desert"))) {
+                        if (DefenseNerf.isFullSet(player, "AGRICULTURE_HELMET", "AGRICULTURE_CHESTPLATE", "AGRICULTURE_LEGGINGS", "AGRICULTURE_BOOTS") && (currentLocation.get(player).equals(ChatColor.AQUA + "Farm") || currentLocation.get(player).equals(ChatColor.AQUA + "The Barn") || currentLocation.get(player).equals(ChatColor.AQUA + "Mushroom Desert"))) {
                             UUID uuid = UUID.fromString("3a53154a-6307-46e0-bc89-15f9651f2934");
 
 
                             boolean hasAttribute = false;
-                            for (AttributeModifier attribute :  player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getModifiers()) {
+                            for (AttributeModifier attribute : player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getModifiers()) {
                                 if (attribute.getName().equals("agricultureSetBonus")) {
                                     hasAttribute = true;
                                 }
@@ -1012,7 +1031,7 @@ public class ColeCrafterSlayers extends JavaPlugin {
 
 
                         } else {
-                            for (AttributeModifier attribute :  player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getModifiers()) {
+                            for (AttributeModifier attribute : player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getModifiers()) {
                                 if (attribute.getName().equals("agricultureSetBonus")) {
                                     player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).removeModifier(attribute);
 
@@ -1029,7 +1048,7 @@ public class ColeCrafterSlayers extends JavaPlugin {
                         }
 
                         if (removeFarmingAuraBoost) {
-                            for (AttributeModifier attribute :  player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getModifiers()) {
+                            for (AttributeModifier attribute : player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getModifiers()) {
                                 if (attribute.getName().equals("agricultureAura")) {
                                     player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).removeModifier(attribute);
 
@@ -1037,11 +1056,6 @@ public class ColeCrafterSlayers extends JavaPlugin {
 
                             }
                         }
-
-
-
-
-
 
 
                         byte breadAccessory = 0;
@@ -1061,33 +1075,32 @@ public class ColeCrafterSlayers extends JavaPlugin {
                             if (foundValue.equals("FRENCH_BREAD") || foundValue.equals("LE_BAGUETTE") || foundValue.equals("FRENCH_SANDWICH")) {
 
 
-
                                 if (foundValue.equals("FRENCH_SANDWICH")) {
                                     breadAccessory = 3;
                                 }
                                 if (foundValue.equals("LE_BAGUETTE")) {
                                     if (breadAccessory < 2)
-                                    breadAccessory = 2;
+                                        breadAccessory = 2;
                                 }
 
                                 if (foundValue.equals("FRENCH_BREAD")) {
                                     if (breadAccessory < 1)
-                                    breadAccessory = 1;
+                                        breadAccessory = 1;
 
                                 }
 
 
                             }
 
-                                if (foundValue.equals("MINER_HELMET") || foundValue.equals("MINER_CHESTPLATE") ||foundValue.equals("MINER_LEGGINGS") || foundValue.equals("MINER_BOOTS")) {
+                            if (foundValue.equals("MINER_HELMET") || foundValue.equals("MINER_CHESTPLATE") || foundValue.equals("MINER_LEGGINGS") || foundValue.equals("MINER_BOOTS")) {
 
 
-                                if (currentLocation.get(player).equals(ChatColor.GOLD+"Gold Mine") || currentLocation.get(player).equals(ChatColor.AQUA+"Deep Caverns")) {
-                                    UUID uuid = UUID.fromString("9e29d7d4-4ff0-4175-9d26-040775c6b6e8");
+                                if (currentLocation.get(player).equals(ChatColor.GOLD + "Gold Mine") || currentLocation.get(player).equals(ChatColor.AQUA + "Deep Caverns")) {
+                                    UUID uuid = UUID.randomUUID();
 
 
                                     boolean hasAttribute = false;
-                                    for (AttributeModifier attribute :  finalMeta.getAttributeModifiers(Attribute.GENERIC_ARMOR)) {
+                                    for (AttributeModifier attribute : finalMeta.getAttributeModifiers(Attribute.GENERIC_ARMOR)) {
                                         if (attribute.getName().equals("minerArmorDefense")) {
                                             hasAttribute = true;
                                         }
@@ -1122,8 +1135,53 @@ public class ColeCrafterSlayers extends JavaPlugin {
                             }
                             item.setItemMeta(finalMeta);
 
+                            if (foundValue.equals("MAGMA_HELMET") || foundValue.equals("MAGMA_CHESTPLATE") || foundValue.equals("MAGMA_LEGGINGS") || foundValue.equals("MAGMA_BOOTS")) {
+
+
+                                if (currentLocation.get(player).equals(ChatColor.RED + "Blazing Fortress")) {
+                                    UUID uuid = UUID.randomUUID();
+
+
+                                    boolean hasAttribute = false;
+                                    for (AttributeModifier attribute : finalMeta.getAttributeModifiers(Attribute.GENERIC_MAX_HEALTH)) {
+                                        if (attribute.getName().equals("magmaArmorHealth")) {
+                                            hasAttribute = true;
+                                        }
+
+                                    }
+                                    if (!hasAttribute) {
+
+                                        switch (foundValue) {
+                                            case "MAGMA_CHESTPLATE":
+                                                finalMeta.addAttributeModifier(Attribute.GENERIC_MAX_HEALTH, new AttributeModifier(uuid, "magmaArmorHealth", 10, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST));
+                                                break;
+                                            case "MAGMA_HELMET":
+                                                finalMeta.addAttributeModifier(Attribute.GENERIC_MAX_HEALTH, new AttributeModifier(uuid, "magmaArmorHealth", 10, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HEAD));
+                                                break;
+                                            case "MAGMA_BOOTS":
+                                                finalMeta.addAttributeModifier(Attribute.GENERIC_MAX_HEALTH, new AttributeModifier(uuid, "magmaArmorHealth", 10, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.FEET));
+                                                break;
+                                            case "MAGMA_LEGGINGS":
+                                                finalMeta.addAttributeModifier(Attribute.GENERIC_MAX_HEALTH, new AttributeModifier(uuid, "magmaArmorHealth", 10, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS));
+                                                break;
+                                        }
+                                    }
+                                } else {
+                                    for (AttributeModifier attribute : finalMeta.getAttributeModifiers(Attribute.GENERIC_MAX_HEALTH)) {
+                                        if (attribute.getName().equals("magmaArmorHealth")) {
+                                            finalMeta.removeAttributeModifier(Attribute.GENERIC_MAX_HEALTH, attribute);
+
+                                        }
+
+                                    }
+                                }
+                            }
+                            item.setItemMeta(finalMeta);
+
 
                         }
+
+
 
                         if (breadAccessory > 0) {
                             boolean canApply = true;
@@ -1196,7 +1254,7 @@ public class ColeCrafterSlayers extends JavaPlugin {
                     }
                 }
             }
-        }, 1, 50);
+        }, 1, 30);
 
 
         scheduleSyncLoop(new Runnable() {
@@ -1309,7 +1367,7 @@ public class ColeCrafterSlayers extends JavaPlugin {
                         boolean thereIsPlayer = false;
                         for (Entity entity : Bukkit.getWorld("hub").getEntities()) {
                             if (entity instanceof LivingEntity) {
-                                if (entity.getLocation().distanceSquared(loc) < 10000) {
+                                if (entity.getLocation().distanceSquared(loc) < 100000) {
                                     NamespacedKey key2 = new NamespacedKey(ColeCrafterSlayers.getInstance(), "mobID");
 
                                     PersistentDataContainer container = entity.getPersistentDataContainer();
@@ -1332,7 +1390,7 @@ public class ColeCrafterSlayers extends JavaPlugin {
                         }
 
 
-                        if (i < amountSpawned.get(key)*2 && thereIsPlayer) {
+                        if (i < amountSpawned.get(key) && thereIsPlayer) {
                             CustomMob.spawnMob(key.toUpperCase(), loc);
                         }
                     }
@@ -1534,6 +1592,7 @@ public class ColeCrafterSlayers extends JavaPlugin {
                             }
                         }
                     }
+
                 }
             }
         }, 1, 2);

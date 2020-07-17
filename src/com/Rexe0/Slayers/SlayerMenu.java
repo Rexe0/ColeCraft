@@ -3,11 +3,14 @@ package com.Rexe0.Slayers;
 // Cybernetic Horror, Future, cyborg themed
 
 import com.Rexe0.ColeCrafterSlayers;
+import com.Rexe0.DefenseNerf;
 import com.Rexe0.Items.Swords.Common.AspectOfTheJerry;
 import com.Rexe0.Items.Swords.Common.RogueSword;
 import com.Rexe0.Items.Swords.Epic.EmberRod;
+import com.Rexe0.Items.Swords.Legendary.AspectOfTheDragons;
 import com.Rexe0.Items.Swords.Legendary.ReaperScythe;
 import com.Rexe0.Items.Swords.Rare.AspectOfTheEnd;
+import com.Rexe0.Items.Swords.Rare.FrozenScythe;
 import com.Rexe0.Items.Swords.Uncommon.GrapplingHook;
 import com.Rexe0.Items.Wands.WandOfHealing;
 import com.Rexe0.Items.Wands.WandOfMending;
@@ -235,6 +238,7 @@ public class SlayerMenu implements Listener {
 
     @EventHandler
     public void onClick(PlayerInteractEvent e) {
+
         if(e.getAction() == Action.PHYSICAL && e.getClickedBlock().getType() == Material.FARMLAND)
             e.setCancelled(true);
         if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
@@ -366,6 +370,14 @@ public class SlayerMenu implements Listener {
 
         if (foundValue.equals("ASPECT_OF_THE_JERRY")) {
             AspectOfTheJerry.use(e.getAction(), e.getPlayer());
+        }
+
+        if (foundValue.equals("ASPECT_OF_THE_DRAGONS")) {
+            AspectOfTheDragons.use(e.getAction(), e.getPlayer());
+        }
+
+        if (foundValue.equals("FROZEN_SCYTHE")) {
+            FrozenScythe.use(e.getAction(), e.getPlayer());
         }
 
         if (foundValue.equals("EMBER_ROD")) {

@@ -702,6 +702,31 @@ public class CustomMob {
 
 
                 return blaze;
+            case "INFERNO":
+                blaze = loc.getWorld().spawn(loc, Blaze.class);
+
+
+
+
+                ItemIDKey = new NamespacedKey(ColeCrafterSlayers.getInstance(), "mobID");
+
+                blaze.getPersistentDataContainer().set(ItemIDKey, PersistentDataType.STRING, "INFERNO");
+
+
+                ItemIDKey1 = new NamespacedKey(ColeCrafterSlayers.getInstance(), "mobLevel");
+
+                blaze.getPersistentDataContainer().set(ItemIDKey1, PersistentDataType.INTEGER, 80);
+
+                blaze.setCustomNameVisible(true);
+                blaze.setCustomName(ChatColor.DARK_GRAY+"["+ChatColor.GRAY+"Lv80"+ChatColor.DARK_GRAY+"] "+ChatColor.GOLD+"Inferno");
+
+                blaze.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(80);
+                blaze.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(100);
+                blaze.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS).setBaseValue(0.3);
+                blaze.setHealth(40);
+
+
+                return blaze;
             case "MAGMA_CUBE":
                 MagmaCube magmaCube = loc.getWorld().spawn(loc, MagmaCube.class);
 
@@ -754,6 +779,7 @@ public class CustomMob {
 
                 witherSkele.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(25);
                 witherSkele.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(30);
+                witherSkele.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE).setBaseValue(2);
                 witherSkele.setHealth(25);
 
 
@@ -779,6 +805,7 @@ public class CustomMob {
                 witherSkele.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(50);
                 witherSkele.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS).setBaseValue(0.9);
                 witherSkele.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(10);
+                witherSkele.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE).setBaseValue(10);
                 witherSkele.setHealth(50);
 
 
