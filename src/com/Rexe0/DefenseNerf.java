@@ -24,6 +24,7 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
@@ -71,6 +72,24 @@ public class DefenseNerf implements Listener {
     private static HashMap<Entity, Integer> thunderlordHits = new HashMap<Entity, Integer>();
 
 
+    public static boolean isWithinEntityBoundingBox(Location location, Entity entity) {
+
+        AxisAlignedBB bb = ((CraftEntity) entity).getHandle().getBoundingBox();
+
+        double x = location.getX();
+        double y = location.getY();
+        double z = location.getZ();
+
+
+        return
+                x >= bb.minX &&
+                        x <= bb.maxX &&
+                        y >= bb.minY &&
+                        y <= bb.maxY &&
+                        z >= bb.minZ &&
+                        z <= bb.maxZ;
+
+    }
 
     public static Vector rotateYAxis(Vector dir, double angleD) {
         double angleR = Math.toRadians(angleD);
@@ -1494,8 +1513,6 @@ public class DefenseNerf implements Listener {
 
         }
 
-        ScoreboardManager manager = Bukkit.getScoreboardManager();
-        Scoreboard scoreboard = manager.getMainScoreboard();
 
         int miningXPAdd = 0;
         int farmingXPAdd = 0;
@@ -1893,6 +1910,34 @@ public class DefenseNerf implements Listener {
                     }, 200);
                 }
 
+                if (ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.AQUA+"Farm") || ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.AQUA+"Mountain") || ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.AQUA+"The Barn") || ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.AQUA+"Mushroom Desert")) {
+                    if (block.getType() == Material.MUSHROOM_STEM || block.getType() == Material.BROWN_MUSHROOM_BLOCK || block.getType() == Material.RED_MUSHROOM_BLOCK) {
+                        BlockData data = block.getBlockData();
+
+                        Material material = block.getType();
+
+                        block.setType(Material.AIR);
+
+
+                        if (!telekinesis) {
+                            block.getWorld().dropItem(block.getLocation(), CustomMaterial.getItemClass("MUSHROOM"));
+                        } else {
+                            player.getInventory().addItem(CustomMaterial.getItemClass("MUSHROOM"));
+                        }
+
+
+
+                        farmingXPAdd = 3;
+
+                        ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
+                            @Override
+                            public void run() {
+                                block.setType(material);
+                                block.setBlockData(data);
+                            }
+                        }, 200);
+                    }
+
 
                 if (block.getType() == Material.WHEAT) {
                     org.bukkit.block.data.Ageable ageable = (org.bukkit.block.data.Ageable) block.getBlockData();
@@ -1970,6 +2015,13 @@ public class DefenseNerf implements Listener {
 
                     Material material = block.getType();
 
+                    Location relative = new Location(block.getLocation().getWorld(), block.getLocation().getBlockX(), block.getLocation().getBlockY()+1, block.getLocation().getBlockZ());
+
+                    if (player.getWorld().getBlockAt(relative).getType() == Material.SUGAR_CANE) {
+                        Bukkit.getServer().getPluginManager().callEvent(new BlockBreakEvent(player.getWorld().getBlockAt(relative), player));
+                    }
+
+
                     block.setType(Material.AIR);
 
 
@@ -1984,8 +2036,14 @@ public class DefenseNerf implements Listener {
                     ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
                         @Override
                         public void run() {
-                            block.setType(material);
-                            block.setBlockData(data);
+                            for (int i = block.getLocation().getBlockY(); i > 0; i--) {
+                                if (block.getWorld().getBlockAt(block.getLocation().getBlockX(), i, block.getLocation().getBlockZ()).getType() == Material.AIR) {
+                                    block.getWorld().getBlockAt(block.getLocation().getBlockX(), i, block.getLocation().getBlockZ()).setType(material);
+                                    block.getWorld().getBlockAt(block.getLocation().getBlockX(), i, block.getLocation().getBlockZ()).setBlockData(data);
+                                } else {
+                                    break;
+                                }
+                            }
                         }
                     }, 200);
                 }

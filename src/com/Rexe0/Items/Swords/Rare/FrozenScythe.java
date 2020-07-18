@@ -2,14 +2,20 @@ package com.Rexe0.Items.Swords.Rare;
 
 
 import com.Rexe0.ColeCrafterSlayers;
+import com.Rexe0.DefenseNerf;
 import com.Rexe0.Effect.IceBolt;
 import com.Rexe0.Items.CustomItem;
 import de.slikey.effectlib.Effect;
 import de.slikey.effectlib.effect.ConeEffect;
 import de.slikey.effectlib.effect.HelixEffect;
 import org.bukkit.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.HashMap;
@@ -40,6 +46,36 @@ public class FrozenScythe extends CustomItem {
                 eff.iterations = 15;
                 eff.start();
 
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        Location location = ((IceBolt) eff).beamLocation;
+
+                        if (location != null) {
+
+                            for (Entity e : location.getChunk().getEntities()) {
+                                if (e instanceof LivingEntity && !(e instanceof Player)) {
+                                    LivingEntity en = (LivingEntity) e;
+
+                                    if (en.getEyeLocation().distanceSquared(location) < 5.0) {
+                                        if (DefenseNerf.isFullSet(player, "FROZEN_BLAZE_HELMET", "FROZEN_BLAZE_CHESTPLATE", "FROZEN_BLAZE_LEGGINGS", "FROZEN_BLAZE_BOOTS")) {
+                                            en.damage(15, player);
+                                        } else {
+                                            en.damage(10, player);
+                                        }
+
+                                        en.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 10, 6, true, true));
+                                        en.getWorld().spawnParticle(Particle.CLOUD, en.getLocation(), 10, 0.1, 0.2, 0.1, 0);
+                                    }
+                                }
+                            }
+                        }
+                        if (eff.isDone()) {
+                            cancel();
+                        }
+                    }
+                }.runTaskTimer(ColeCrafterSlayers.getInstance(), 0, 1);
+
 
 
 
@@ -49,7 +85,7 @@ public class FrozenScythe extends CustomItem {
                     public void run() {
                         fsCD.put(player, false);
                     }
-                }, 10);
+                }, 6);
             }
         }
     }

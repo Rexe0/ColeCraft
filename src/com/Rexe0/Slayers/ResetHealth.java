@@ -61,14 +61,7 @@ public class ResetHealth implements CommandExecutor {
 
 
 
-                    // Gets instance of world border
-                    WorldBorder border = player.getLocation().getWorld().getWorldBorder();
 
-                    // Sets the center.
-                    border.setCenter(player.getLocation());
-
-                    // Sets the radius
-                    border.setSize(100);
 
 
                     ColeCrafterSlayers.setSkillLevel(player, "foraging",0);

@@ -99,6 +99,19 @@ public class CustomLootDrop extends Event implements Cancellable {
     public void execute() {
         Random RNG = new Random();
 
+        boolean telekinesis = false;
+        for (ItemStack item : player.getInventory().getContents()) {
+            String foundValue1 = DefenseNerf.getItemID(item);
+
+            if (foundValue1 != null) {
+                if (foundValue1.equals("TELEKINESIS_TALISMAN")) {
+                    telekinesis = true;
+
+                }
+            }
+
+        }
+
         int number = 0;
         if (rarity == Rarity.GUARANTEED) {
 
@@ -108,19 +121,24 @@ public class CustomLootDrop extends Event implements Cancellable {
 
             if (number > 0) {
 
+
                 ItemStack item = this.item;
                 item.setAmount(number);
 
-                Item itemDrop = this.entity.getWorld().dropItem(this.entity.getLocation(), item);
-                ArrayList<Item> itemReserved;
-                itemReserved = DefenseNerf.playerSpecificPickup.get(this.player);
-                if (itemReserved == null) {
-                    itemReserved = new ArrayList<>();
+                if (!telekinesis) {
+                    Item itemDrop = this.entity.getWorld().dropItem(this.entity.getLocation(), item);
+                    ArrayList<Item> itemReserved;
+                    itemReserved = DefenseNerf.playerSpecificPickup.get(this.player);
+                    if (itemReserved == null) {
+                        itemReserved = new ArrayList<>();
 
 
+                    }
+                    itemReserved.add(itemDrop);
+                    DefenseNerf.playerSpecificPickup.put(this.player, itemReserved);
+                } else {
+                    this.player.getInventory().addItem(item);
                 }
-                itemReserved.add(itemDrop);
-                DefenseNerf.playerSpecificPickup.put(this.player, itemReserved);
             }
 
 

@@ -27,6 +27,8 @@ public class IceBolt extends Effect {
      */
     public float lengthGrow = 0.2f;
 
+    public Location beamLocation;
+
     /**
      * Radials per iteration to spawn the next particle (PI / 16)
      */
@@ -96,6 +98,8 @@ public class IceBolt extends Effect {
 
 
             location.add(v);
+
+            this.beamLocation = location;
 
 
             if (location.getWorld().getBlockAt(location.getBlockX(), location.getBlockY(), location.getBlockZ()).getType().isSolid()) {

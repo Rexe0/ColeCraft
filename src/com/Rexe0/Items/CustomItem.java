@@ -392,7 +392,7 @@ public class CustomItem extends ItemStack {
             case "FROZEN_SCYTHE":
                 Lore.add(ChatColor.GOLD+"Item Ability: Ice Bolt");
                 Lore.add(ChatColor.GRAY+"Shoots a bolt forwards that deals");
-                Lore.add(ChatColor.RED+"5 Damage "+ChatColor.GRAY+"and briefly freeze");
+                Lore.add(ChatColor.RED+"10 Damage "+ChatColor.GRAY+"and briefly freezes");
                 Lore.add(ChatColor.GRAY+"any enemies hit with the projectile.");
                 break;
             case "HURRICANE_BOW":
@@ -513,6 +513,9 @@ public class CustomItem extends ItemStack {
                 Lore.add(ChatColor.GRAY+"reduces their"+ChatColor.WHITE+" ✦ Speed"+ChatColor.GRAY+" by 45%.");
                 Lore.add(ChatColor.GRAY+" ");
                 Lore.add(ChatColor.GRAY+"Max "+ChatColor.RED+"20"+ChatColor.GRAY+" damage/s");
+                Lore.add(ChatColor.GRAY+" ");
+                Lore.add(ChatColor.GOLD+"Secondary Full Set Bonus: Frozen Death");
+                Lore.add(ChatColor.GRAY+"Increases Frozen Scythe's "+ChatColor.RED+"Damage "+ChatColor.GRAY+"by "+ChatColor.RED+"5");
                 break;
             case "SPEEDSTER_HELMET":
             case "SPEEDSTER_CHESTPLATE":
