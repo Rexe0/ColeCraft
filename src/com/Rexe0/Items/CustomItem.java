@@ -515,7 +515,8 @@ public class CustomItem extends ItemStack {
                 Lore.add(ChatColor.GRAY+"Max "+ChatColor.RED+"20"+ChatColor.GRAY+" damage/s");
                 Lore.add(ChatColor.GRAY+" ");
                 Lore.add(ChatColor.GOLD+"Secondary Full Set Bonus: Frozen Death");
-                Lore.add(ChatColor.GRAY+"Increases Frozen Scythe's "+ChatColor.RED+"Damage "+ChatColor.GRAY+"by "+ChatColor.RED+"5");
+                Lore.add(ChatColor.GRAY+"Increases Frozen Scythe's "+ChatColor.RED+"Damage "+ChatColor.GRAY+"by "+ChatColor.RED+"3");
+                Lore.add(ChatColor.GRAY+"and decrease the cooldown of the weapon.");
                 break;
             case "SPEEDSTER_HELMET":
             case "SPEEDSTER_CHESTPLATE":
@@ -1119,6 +1120,11 @@ public class CustomItem extends ItemStack {
         cleaver = new CustomRecipe(new EnchantedDiamond(), 1, false);
         cleaver.addPatterns(" % ", "%%%", " % ");
         cleaver.setIngredient('%', CustomMaterial.getItemClass("DIAMOND"), 4);
+        CustomRecipe.customRecipes.add(cleaver);
+
+        cleaver = new CustomRecipe(new EnchantedMushroom(), 1, false);
+        cleaver.addPatterns(" % ", "%%%", " % ");
+        cleaver.setIngredient('%', CustomMaterial.getItemClass("MUSHROOM"), 4);
         CustomRecipe.customRecipes.add(cleaver);
 
         cleaver = new CustomRecipe(new EnchantedDiamondBlock(), 1, false);

@@ -1529,7 +1529,7 @@ public class DefenseNerf implements Listener {
 
 
         if (e.isDropItems()) {
-            if (ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.AQUA+"Coal Mine") || ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.GOLD+"Gold Mine") || ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.AQUA+"Deep Caverns")) {
+            if (ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.AQUA + "Coal Mine") || ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.GOLD + "Gold Mine") || ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.AQUA + "Deep Caverns")) {
                 if (block.getType() == Material.STONE) {
                     block.setType(Material.BEDROCK);
                     if (!telekinesis) {
@@ -1749,8 +1749,7 @@ public class DefenseNerf implements Listener {
             }
 
 
-
-            if (ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.AQUA+"Forest")) {
+            if (ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.AQUA + "Forest")) {
                 if (block.getType() == Material.OAK_LOG || block.getType() == Material.BIRCH_LOG || block.getType() == Material.SPRUCE_LOG || block.getType() == Material.JUNGLE_LOG || block.getType() == Material.DARK_OAK_LOG || block.getType() == Material.ACACIA_LOG ||
                         block.getType() == Material.OAK_WOOD || block.getType() == Material.BIRCH_WOOD || block.getType() == Material.SPRUCE_WOOD || block.getType() == Material.JUNGLE_WOOD || block.getType() == Material.DARK_OAK_WOOD || block.getType() == Material.ACACIA_WOOD) {
                     BlockData data = block.getBlockData();
@@ -1858,7 +1857,6 @@ public class DefenseNerf implements Listener {
                     }
 
 
-
                     forgagingXPAdd = 6;
 
                     ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
@@ -1871,7 +1869,7 @@ public class DefenseNerf implements Listener {
                 }
             }
 
-            if (ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.AQUA+"Farm") || ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.AQUA+"Mountain") || ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.AQUA+"The Barn") || ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.AQUA+"Mushroom Desert")) {
+            if (ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.AQUA + "Farm") || ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.AQUA + "Mountain") || ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.AQUA + "The Barn") || ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.AQUA + "Mushroom Desert")) {
                 if (block.getType() == Material.CARVED_PUMPKIN || block.getType() == Material.MELON) {
                     BlockData data = block.getBlockData();
 
@@ -1910,7 +1908,7 @@ public class DefenseNerf implements Listener {
                     }, 200);
                 }
 
-                if (ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.AQUA+"Farm") || ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.AQUA+"Mountain") || ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.AQUA+"The Barn") || ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.AQUA+"Mushroom Desert")) {
+                if (ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.AQUA + "Farm") || ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.AQUA + "Mountain") || ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.AQUA + "The Barn") || ColeCrafterSlayers.currentLocation.get(player).equals(ChatColor.AQUA + "Mushroom Desert")) {
                     if (block.getType() == Material.MUSHROOM_STEM || block.getType() == Material.BROWN_MUSHROOM_BLOCK || block.getType() == Material.RED_MUSHROOM_BLOCK) {
                         BlockData data = block.getBlockData();
 
@@ -1926,7 +1924,6 @@ public class DefenseNerf implements Listener {
                         }
 
 
-
                         farmingXPAdd = 3;
 
                         ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
@@ -1939,211 +1936,202 @@ public class DefenseNerf implements Listener {
                     }
 
 
-                if (block.getType() == Material.WHEAT) {
-                    org.bukkit.block.data.Ageable ageable = (org.bukkit.block.data.Ageable) block.getBlockData();
-                    if (ageable.getAge() == 7) {
-                        block.setType(Material.AIR);
-                        if (!telekinesis) {
-                            block.getWorld().dropItem(block.getLocation(), CustomMaterial.getItemClass("WHEAT"));
-                        } else {
-                            player.getInventory().addItem(CustomMaterial.getItemClass("WHEAT"));
-                        }
-
-                        farmingXPAdd = 1;
-
-                        ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
-                            @Override
-                            public void run() {
-                                block.setType(Material.WHEAT);
-                                ageable.setAge(7);
-                                block.setBlockData(ageable);
+                    if (block.getType() == Material.WHEAT) {
+                        org.bukkit.block.data.Ageable ageable = (org.bukkit.block.data.Ageable) block.getBlockData();
+                        if (ageable.getAge() == 7) {
+                            block.setType(Material.AIR);
+                            if (!telekinesis) {
+                                block.getWorld().dropItem(block.getLocation(), CustomMaterial.getItemClass("WHEAT"));
+                            } else {
+                                player.getInventory().addItem(CustomMaterial.getItemClass("WHEAT"));
                             }
-                        }, 80);
-                    }
-                }
 
-                if (block.getType() == Material.CARROTS) {
-                    org.bukkit.block.data.Ageable ageable = (org.bukkit.block.data.Ageable) block.getBlockData();
-                    if (ageable.getAge() == 7) {
-                        block.setType(Material.AIR);
-                        if (!telekinesis) {
-                            block.getWorld().dropItem(block.getLocation(), CustomMaterial.getItemClass("CARROT"));
-                        } else {
-                            player.getInventory().addItem(CustomMaterial.getItemClass("CARROT"));
+                            farmingXPAdd = 1;
+
+                            ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
+                                @Override
+                                public void run() {
+                                    block.setType(Material.WHEAT);
+                                    ageable.setAge(7);
+                                    block.setBlockData(ageable);
+                                }
+                            }, 80);
                         }
+                    }
+
+                    if (block.getType() == Material.CARROTS) {
+                        org.bukkit.block.data.Ageable ageable = (org.bukkit.block.data.Ageable) block.getBlockData();
+                        if (ageable.getAge() == 7) {
+                            block.setType(Material.AIR);
+                            if (!telekinesis) {
+                                block.getWorld().dropItem(block.getLocation(), CustomMaterial.getItemClass("CARROT"));
+                            } else {
+                                player.getInventory().addItem(CustomMaterial.getItemClass("CARROT"));
+                            }
+                            farmingXPAdd = 2;
+
+
+                            ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
+                                @Override
+                                public void run() {
+                                    block.setType(Material.CARROTS);
+                                    ageable.setAge(7);
+                                    block.setBlockData(ageable);
+                                }
+                            }, 140);
+                        }
+                    }
+
+                    if (block.getType() == Material.POTATOES) {
+                        org.bukkit.block.data.Ageable ageable = (org.bukkit.block.data.Ageable) block.getBlockData();
+                        if (ageable.getAge() == 7) {
+                            block.setType(Material.AIR);
+                            if (!telekinesis) {
+                                block.getWorld().dropItem(block.getLocation(), CustomMaterial.getItemClass("POTATO"));
+                            } else {
+                                player.getInventory().addItem(CustomMaterial.getItemClass("POTATO"));
+                            }
+
+                            farmingXPAdd = 2;
+
+                            ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
+                                @Override
+                                public void run() {
+                                    block.setType(Material.POTATOES);
+                                    ageable.setAge(7);
+                                    block.setBlockData(ageable);
+                                }
+                            }, 140);
+                        }
+                    }
+
+
+                    if (block.getType() == Material.SUGAR_CANE) {
+                        BlockData data = block.getBlockData();
+
+                        Material material = block.getType();
+
+                        Location relative = new Location(block.getLocation().getWorld(), block.getLocation().getBlockX(), block.getLocation().getBlockY() + 1, block.getLocation().getBlockZ());
+
+                        if (player.getWorld().getBlockAt(relative).getType() == Material.SUGAR_CANE) {
+                            Bukkit.getServer().getPluginManager().callEvent(new BlockBreakEvent(player.getWorld().getBlockAt(relative), player));
+                        }
+
+
+                        block.setType(Material.AIR);
+
+
+                        if (!telekinesis) {
+                            block.getWorld().dropItem(block.getLocation(), CustomMaterial.getItemClass("SUGAR_CANE"));
+                        } else {
+                            player.getInventory().addItem(CustomMaterial.getItemClass("SUGAR_CANE"));
+                        }
+
                         farmingXPAdd = 2;
 
-
                         ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
                             @Override
                             public void run() {
-                                block.setType(Material.CARROTS);
-                                ageable.setAge(7);
-                                block.setBlockData(ageable);
-                            }
-                        }, 140);
-                    }
-                }
-
-                if (block.getType() == Material.POTATOES) {
-                    org.bukkit.block.data.Ageable ageable = (org.bukkit.block.data.Ageable) block.getBlockData();
-                    if (ageable.getAge() == 7) {
-                        block.setType(Material.AIR);
-                        if (!telekinesis) {
-                            block.getWorld().dropItem(block.getLocation(), CustomMaterial.getItemClass("POTATO"));
-                        } else {
-                            player.getInventory().addItem(CustomMaterial.getItemClass("POTATO"));
-                        }
-
-                        farmingXPAdd = 2;
-
-                        ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
-                            @Override
-                            public void run() {
-                                block.setType(Material.POTATOES);
-                                ageable.setAge(7);
-                                block.setBlockData(ageable);
-                            }
-                        }, 140);
-                    }
-                }
-
-
-
-                if (block.getType() == Material.SUGAR_CANE) {
-                    BlockData data = block.getBlockData();
-
-                    Material material = block.getType();
-
-                    Location relative = new Location(block.getLocation().getWorld(), block.getLocation().getBlockX(), block.getLocation().getBlockY()+1, block.getLocation().getBlockZ());
-
-                    if (player.getWorld().getBlockAt(relative).getType() == Material.SUGAR_CANE) {
-                        Bukkit.getServer().getPluginManager().callEvent(new BlockBreakEvent(player.getWorld().getBlockAt(relative), player));
-                    }
-
-
-                    block.setType(Material.AIR);
-
-
-                    if (!telekinesis) {
-                        block.getWorld().dropItem(block.getLocation(), CustomMaterial.getItemClass("SUGAR_CANE"));
-                    } else {
-                        player.getInventory().addItem(CustomMaterial.getItemClass("SUGAR_CANE"));
-                    }
-
-                    farmingXPAdd = 2;
-
-                    ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
-                        @Override
-                        public void run() {
-                            for (int i = block.getLocation().getBlockY(); i > 0; i--) {
-                                if (block.getWorld().getBlockAt(block.getLocation().getBlockX(), i, block.getLocation().getBlockZ()).getType() == Material.AIR) {
-                                    block.getWorld().getBlockAt(block.getLocation().getBlockX(), i, block.getLocation().getBlockZ()).setType(material);
-                                    block.getWorld().getBlockAt(block.getLocation().getBlockX(), i, block.getLocation().getBlockZ()).setBlockData(data);
-                                } else {
-                                    break;
+                                for (int i = block.getLocation().getBlockY(); i > 0; i--) {
+                                    if (block.getWorld().getBlockAt(block.getLocation().getBlockX(), i, block.getLocation().getBlockZ()).getType() == Material.AIR) {
+                                        block.getWorld().getBlockAt(block.getLocation().getBlockX(), i, block.getLocation().getBlockZ()).setType(material);
+                                        block.getWorld().getBlockAt(block.getLocation().getBlockX(), i, block.getLocation().getBlockZ()).setBlockData(data);
+                                    } else {
+                                        break;
+                                    }
                                 }
                             }
-                        }
-                    }, 200);
+                        }, 200);
+                    }
                 }
+            }
+
+            NumberFormat numberFormat = NumberFormat.getInstance();
+
+            numberFormat.setGroupingUsed(true);
+
+            if (miningXPAdd > 0) {
+
+                float combatXp = ColeCrafterSlayers.getSkillXP(player, "mining");
+                float combatLevel = ColeCrafterSlayers.getSkillLevel(player, "mining");
+
+
+                ColeCrafterSlayers.setSkillXP(player, "mining", combatXp + miningXPAdd);
+
+
+                String combatXpmessage = "§3+" + miningXPAdd + " Mining (" + numberFormat.format(combatXp) + "/" + numberFormat.format(combatLevel == 50 ? numberFormat.format(Math.ceil(100 * (Math.pow(1.26, 48)) + 200 * 50)) : Math.ceil(100 * (Math.pow(1.26, combatLevel))) + 200 * (combatLevel)) + ")";
+                player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 2, 2);
+
+                PacketPlayOutChat packet = new PacketPlayOutChat(IChatBaseComponent.ChatSerializer.a("{\"text\":\"" + combatXpmessage + "\"}"), ChatMessageType.GAME_INFO, UUID.randomUUID());
+
+                ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+
+                ColeCrafterSlayers.displayActionbar.put(player, false);
+                ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
+                    @Override
+                    public void run() {
+                        ColeCrafterSlayers.displayActionbar.put(player, true);
+                    }
+                }, 40);
+
+
+            }
+
+            if (farmingXPAdd > 0) {
+
+                float combatXp = ColeCrafterSlayers.getSkillXP(player, "farming");
+                float combatLevel = ColeCrafterSlayers.getSkillLevel(player, "farming");
+
+
+                ColeCrafterSlayers.setSkillXP(player, "farming", combatXp + farmingXPAdd);
+
+
+                String combatXpmessage = "§3+" + farmingXPAdd + " Farming (" + numberFormat.format(combatXp) + "/" + numberFormat.format(combatLevel == 50 ? Math.ceil(100 * (Math.pow(1.26, 48)) + 400 * 50) : Math.ceil(100 * (Math.pow(1.26, combatLevel))) + 400 * (combatLevel)) + ")";
+                player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 2, 2);
+
+                PacketPlayOutChat packet = new PacketPlayOutChat(IChatBaseComponent.ChatSerializer.a("{\"text\":\"" + combatXpmessage + "\"}"), ChatMessageType.GAME_INFO, UUID.randomUUID());
+
+                ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+
+                ColeCrafterSlayers.displayActionbar.put(player, false);
+                ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
+                    @Override
+                    public void run() {
+                        ColeCrafterSlayers.displayActionbar.put(player, true);
+                    }
+                }, 40);
+
+
+            }
+
+            if (forgagingXPAdd > 0) {
+
+                float combatXp = ColeCrafterSlayers.getSkillXP(player, "foraging");
+                float combatLevel = ColeCrafterSlayers.getSkillLevel(player, "foraging");
+
+
+                ColeCrafterSlayers.setSkillXP(player, "foraging", combatXp + forgagingXPAdd);
+
+
+                String combatXpmessage = "§3+" + forgagingXPAdd + " Foraging (" + numberFormat.format(combatXp) + "/" + numberFormat.format(combatLevel == 50 ? Math.ceil(100 * (Math.pow(1.26, 48)) + 400 * 50) : Math.ceil(100 * (Math.pow(1.26, combatLevel))) + 400 * (combatLevel)) + ")";
+                player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 2, 2);
+
+                PacketPlayOutChat packet = new PacketPlayOutChat(IChatBaseComponent.ChatSerializer.a("{\"text\":\"" + combatXpmessage + "\"}"), ChatMessageType.GAME_INFO, UUID.randomUUID());
+
+                ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+
+                ColeCrafterSlayers.displayActionbar.put(player, false);
+                ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
+                    @Override
+                    public void run() {
+                        ColeCrafterSlayers.displayActionbar.put(player, true);
+                    }
+                }, 40);
+
+
             }
         }
 
-        NumberFormat numberFormat = NumberFormat.getInstance();
-
-        numberFormat.setGroupingUsed(true);
-
-        if (miningXPAdd > 0) {
-
-            float combatXp = ColeCrafterSlayers.getSkillXP(player, "mining");
-            float combatLevel = ColeCrafterSlayers.getSkillLevel(player, "mining");
-
-
-
-
-            ColeCrafterSlayers.setSkillXP(player, "mining", combatXp + miningXPAdd);
-
-
-
-
-
-            String combatXpmessage = "§3+" + miningXPAdd + " Mining (" + numberFormat.format(combatXp) + "/" + numberFormat.format(combatLevel == 50 ? numberFormat.format(Math.ceil(100 * (Math.pow(1.26, 48)) + 200 * 50)) : Math.ceil(100 * (Math.pow(1.26, combatLevel))) + 200 * (combatLevel)) + ")";
-            player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 2, 2);
-
-            PacketPlayOutChat packet = new PacketPlayOutChat(IChatBaseComponent.ChatSerializer.a("{\"text\":\"" + combatXpmessage + "\"}"), ChatMessageType.GAME_INFO, UUID.randomUUID());
-
-            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
-
-            ColeCrafterSlayers.displayActionbar.put(player, false);
-            ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
-                @Override
-                public void run() {
-                    ColeCrafterSlayers.displayActionbar.put(player, true);
-                }
-            }, 40);
-
-
-        }
-
-        if (farmingXPAdd > 0) {
-
-            float combatXp = ColeCrafterSlayers.getSkillXP(player, "farming");
-            float combatLevel = ColeCrafterSlayers.getSkillLevel(player, "farming");
-
-
-
-
-            ColeCrafterSlayers.setSkillXP(player, "farming", combatXp + farmingXPAdd);
-
-
-            String combatXpmessage = "§3+" + farmingXPAdd  + " Farming (" + numberFormat.format(combatXp) + "/" + numberFormat.format(combatLevel == 50 ? Math.ceil(100 * (Math.pow(1.26, 48)) + 400 * 50) : Math.ceil(100 * (Math.pow(1.26, combatLevel))) + 400 * (combatLevel)) + ")";
-            player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 2, 2);
-
-            PacketPlayOutChat packet = new PacketPlayOutChat(IChatBaseComponent.ChatSerializer.a("{\"text\":\"" + combatXpmessage + "\"}"), ChatMessageType.GAME_INFO, UUID.randomUUID());
-
-            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
-
-            ColeCrafterSlayers.displayActionbar.put(player, false);
-            ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
-                @Override
-                public void run() {
-                    ColeCrafterSlayers.displayActionbar.put(player, true);
-                }
-            }, 40);
-
-
-        }
-
-        if (forgagingXPAdd > 0) {
-
-            float combatXp = ColeCrafterSlayers.getSkillXP(player, "foraging");
-            float combatLevel = ColeCrafterSlayers.getSkillLevel(player, "foraging");
-
-
-
-
-
-            ColeCrafterSlayers.setSkillXP(player, "foraging", combatXp + forgagingXPAdd);
-
-
-            String combatXpmessage = "§3+" + forgagingXPAdd  + " Foraging (" + numberFormat.format(combatXp) + "/" + numberFormat.format(combatLevel == 50 ? Math.ceil(100 * (Math.pow(1.26, 48)) + 400 * 50) : Math.ceil(100 * (Math.pow(1.26, combatLevel))) + 400 * (combatLevel)) + ")";
-            player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 2, 2);
-
-            PacketPlayOutChat packet = new PacketPlayOutChat(IChatBaseComponent.ChatSerializer.a("{\"text\":\"" + combatXpmessage + "\"}"), ChatMessageType.GAME_INFO, UUID.randomUUID());
-
-            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
-
-            ColeCrafterSlayers.displayActionbar.put(player, false);
-            ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
-                @Override
-                public void run() {
-                    ColeCrafterSlayers.displayActionbar.put(player, true);
-                }
-            }, 40);
-
-
-        }
 
 
 

@@ -200,6 +200,8 @@ public class CustomMaterial extends ItemStack {
                 return new NetheriteScrap();
             case "MUSHROOM":
                 return new Mushroom();
+            case "ENCHANTED_MUSHROOM":
+                return new EnchantedMushroom();
             default:
                 return null;
         }

@@ -59,7 +59,7 @@ public class FrozenScythe extends CustomItem {
 
                                     if (en.getEyeLocation().distanceSquared(location) < 5.0) {
                                         if (DefenseNerf.isFullSet(player, "FROZEN_BLAZE_HELMET", "FROZEN_BLAZE_CHESTPLATE", "FROZEN_BLAZE_LEGGINGS", "FROZEN_BLAZE_BOOTS")) {
-                                            en.damage(15, player);
+                                            en.damage(13, player);
                                         } else {
                                             en.damage(10, player);
                                         }
@@ -79,13 +79,23 @@ public class FrozenScythe extends CustomItem {
 
 
 
+                if (DefenseNerf.isFullSet(player, "FROZEN_BLAZE_HELMET", "FROZEN_BLAZE_CHESTPLATE", "FROZEN_BLAZE_LEGGINGS", "FROZEN_BLAZE_BOOTS")) {
+                    ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
+                        @Override
+                        public void run() {
+                            fsCD.put(player, false);
+                        }
+                    }, 3);
+                } else {
+                    ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
+                        @Override
+                        public void run() {
+                            fsCD.put(player, false);
+                        }
+                    }, 6);
+                }
                 fsCD.put(player, true);
-                ColeCrafterSlayers.scheduleSyncDelayedTask(new Runnable() {
-                    @Override
-                    public void run() {
-                        fsCD.put(player, false);
-                    }
-                }, 6);
+
             }
         }
     }
