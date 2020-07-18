@@ -847,37 +847,62 @@ public class ColeCrafterSlayers extends JavaPlugin {
                                 if (distanceSquared <= 25) {
                                     Location teleport = null;
                                     if (requiredToTeleport.getValue() == 0) {
-                                        teleport = new Location(Bukkit.getWorld("hub"), -4.5f, 74f, -272.5f, 180, 0);
+                                        if (getSkillLevel(player, "mining") >= 1) {
+                                            teleport = new Location(Bukkit.getWorld("hub"), -4.5f, 74f, -272.5f, 180, 0);
+                                        } else {
+                                            player.sendMessage(ChatColor.RED+"You must be at least Farming Skill Level 1 to enter the "+ChatColor.GOLD+"Gold Mine");
+                                        }
                                     }
                                     if (requiredToTeleport.getValue() == 1) {
                                         teleport = new Location(Bukkit.getWorld("hub"), -9.5f, 64f, -227.5f, 0, 0);
                                     }
                                     if (requiredToTeleport.getValue() == 2) {
-                                        teleport = new Location(Bukkit.getWorld("hub"), -3, 157, -488.5, 180, 0);
+                                        if (getSkillLevel(player, "mining") >= 5) {
+                                            teleport = new Location(Bukkit.getWorld("hub"), -3, 157, -488.5, 180, 0);
+                                        } else {
+                                            player.sendMessage(ChatColor.RED+"You must be at least Farming Skill Level 5 to enter the "+ChatColor.AQUA+"Deep Caverns");
+                                        }
                                     }
                                     if (requiredToTeleport.getValue() == 3) {
                                         teleport = new Location(Bukkit.getWorld("hub"), -7, 68, -392.5, 0, 0);
                                     }
                                     if (requiredToTeleport.getValue() == 4) {
-                                        teleport = new Location(Bukkit.getWorld("hub"), 115.5, 71, -206.5, -135, 0);
+                                        if (getSkillLevel(player, "farming") >= 1) {
+                                            teleport = new Location(Bukkit.getWorld("hub"), 115.5, 71, -206.5, -135, 0);
+                                        } else {
+                                            player.sendMessage(ChatColor.RED+"You must be at least Farming Skill Level 1 to enter "+ChatColor.AQUA+"The Barn");
+                                        }
                                     }
                                     if (requiredToTeleport.getValue() == 5) {
                                         teleport = new Location(Bukkit.getWorld("hub"), 75.5, 72, -180.5, 45, 0);
                                     }
                                     if (requiredToTeleport.getValue() == 6) {
-                                        teleport = new Location(Bukkit.getWorld("hub"), 153.5, 77, -361.5, -135, 0);
+                                        if (getSkillLevel(player, "farming") >= 5) {
+                                            teleport = new Location(Bukkit.getWorld("hub"), 153.5, 77, -361.5, -135, 0);
+                                        } else {
+                                            player.sendMessage(ChatColor.RED+"You must be at least Farming Skill Level 5 to enter the "+ChatColor.AQUA+"Mushroom Desert");
+                                        }
+
                                     }
                                     if (requiredToTeleport.getValue() == 7) {
                                         teleport = new Location(Bukkit.getWorld("hub"), 142.5, 91, -304.5, 0, 0);
                                     }
                                     if (requiredToTeleport.getValue() == 8) {
-                                        teleport = new Location(Bukkit.getWorld("hub"), -201.5, 84, -232.5, 135, 0);
+                                        if (getSkillLevel(player, "combat") >= 1) {
+                                            teleport = new Location(Bukkit.getWorld("hub"), -201.5, 84, -232.5, 135, 0);
+                                        } else {
+                                            player.sendMessage(ChatColor.RED+"You must be at least Combat Skill Level 1 to enter the "+ChatColor.RED+"Spiders Den");
+                                        }
                                     }
                                     if (requiredToTeleport.getValue() == 9) {
                                         teleport = new Location(Bukkit.getWorld("hub"), -160.5, 73, -159.5, -45, 0);
                                     }
                                     if (requiredToTeleport.getValue() == 10) {
-                                        teleport = new Location(Bukkit.getWorld("hub"), -310.0, 83, -380.5, 180, 0);
+                                        if (getSkillLevel(player, "combat") >= 5) {
+                                            teleport = new Location(Bukkit.getWorld("hub"), -310.0, 83, -380.5, 180, 0);
+                                        } else {
+                                            player.sendMessage(ChatColor.RED+"You must be at least Combat Skill Level 5 to enter the "+ChatColor.RED+"Blazing Fortress");
+                                        }
                                     }
                                     if (requiredToTeleport.getValue() == 11) {
                                         teleport = new Location(Bukkit.getWorld("hub"), -254.0, 132, -290.5, 0, 0);

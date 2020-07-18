@@ -516,7 +516,7 @@ public class CustomItem extends ItemStack {
                 Lore.add(ChatColor.GRAY+" ");
                 Lore.add(ChatColor.GOLD+"Secondary Full Set Bonus: Frozen Death");
                 Lore.add(ChatColor.GRAY+"Increases Frozen Scythe's "+ChatColor.RED+"Damage "+ChatColor.GRAY+"by "+ChatColor.RED+"3");
-                Lore.add(ChatColor.GRAY+"and decrease the cooldown of the weapon.");
+                Lore.add(ChatColor.GRAY+"and halves the cooldown of the weapon.");
                 break;
             case "SPEEDSTER_HELMET":
             case "SPEEDSTER_CHESTPLATE":

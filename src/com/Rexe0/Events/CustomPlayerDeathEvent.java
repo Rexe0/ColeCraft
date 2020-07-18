@@ -55,10 +55,17 @@ public class CustomPlayerDeathEvent extends Event implements Cancellable {
             } else if (ColeCrafterSlayers.currentLocation.get((Player) this.entity).equals(ChatColor.AQUA+"The Barn")) {
                 this.entity.teleport(new Location(Bukkit.getWorld("hub"),  115.5, 71, -206.5, -135, 0));
 
+            } else if (ColeCrafterSlayers.currentLocation.get((Player) this.entity).equals(ChatColor.AQUA+"Mushroom Desert")) {
+                this.entity.teleport(new Location(Bukkit.getWorld("hub"),  153.5, 77, -361.5, -135, 0));
+
+            } else if (ColeCrafterSlayers.currentLocation.get((Player) this.entity).equals(ChatColor.RED+"Blazing Fortress")) {
+                this.entity.teleport(new Location(Bukkit.getWorld("hub"),  -310.0, 83, -380.5, 180, 0));
+            } else if (ColeCrafterSlayers.currentLocation.get((Player) this.entity).equals(ChatColor.RED+"Spiders Den")) {
+                this.entity.teleport(new Location(Bukkit.getWorld("hub"),  -201.5, 84, -232.5, 135, 0));
             } else {
                 this.entity.teleport(new Location(Bukkit.getWorld("hub"), -3, 70, -85));
             }
-
+//
 
             if (this.reason == DeathReason.ENVIRONMENT) {
                 for (Player player : Bukkit.getOnlinePlayers()) {

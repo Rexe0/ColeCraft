@@ -697,7 +697,7 @@ public class CustomMob {
 
                 blaze.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(40);
                 blaze.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(20);
-                blaze.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS).setBaseValue(0.1);
+                blaze.getAttribute(Attribute.GENERIC_ARMOR).setBaseValue(10);
                 blaze.setHealth(40);
 
 
@@ -722,7 +722,7 @@ public class CustomMob {
 
                 blaze.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(80);
                 blaze.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(100);
-                blaze.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS).setBaseValue(0.3);
+                blaze.getAttribute(Attribute.GENERIC_ARMOR).setBaseValue(15);
                 blaze.setHealth(40);
 
 
@@ -803,7 +803,7 @@ public class CustomMob {
                 witherSkele.setCustomName(ChatColor.DARK_GRAY+"["+ChatColor.GRAY+"Lv32"+ChatColor.DARK_GRAY+"] "+ChatColor.DARK_GRAY+"Withered Armor");
 
                 witherSkele.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(50);
-                witherSkele.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS).setBaseValue(0.9);
+                witherSkele.getAttribute(Attribute.GENERIC_ARMOR).setBaseValue(180);
                 witherSkele.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(10);
                 witherSkele.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE).setBaseValue(10);
                 witherSkele.setHealth(50);
